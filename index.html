@@ -1,1474 +1,834 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Glamour Salon — Accounting System</title>
+<title>Glamour Salon — النظام المالي والإداري المتكامل</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,sans-serif;background:#f0f0f5;min-height:100vh;display:flex}
-.app{display:flex;width:100%;height:100vh;overflow:hidden}
-.sidebar{width:220px;background:#1a1a2e;color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f0f0f5;min-height:100vh;display:flex;direction:rtl}
+.app{display:none;width:100%;height:100vh;overflow:hidden}
+.sidebar{width:250px;background:#1a1a2e;color:#fff;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;border-left:1px solid rgba(255,255,255,.1)}
 .sidebar-logo{padding:18px 14px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
 .logo-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .logo-icon{width:32px;height:32px;background:#C9A84C;border-radius:8px;display:flex;align-items:center;justify-content:center}
 .salon-name{font-size:13px;font-weight:600;color:#C9A84C}
 .salon-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
-.version{font-size:10px;color:rgba(255,255,255,.3);margin-top:6px}
-.nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:rgba(255,255,255,.65);transition:all .15s;position:relative}
+.nav-section{padding:12px 10px 4px;font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;font-weight:bold}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:rgba(255,255,255,.65);transition:all .15s}
 .nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav-item.active{background:#C9A84C;color:#1a1a2e;font-weight:600}
-.nav-item i{font-size:16px;width:18px;flex-shrink:0}
-.nav-badge{margin-left:auto;background:rgba(201,168,76,.2);color:#C9A84C;font-size:10px;padding:1px 6px;border-radius:10px}
-.nav-item.active .nav-badge{background:rgba(26,26,46,.2);color:#1a1a2e}
-.sidebar-footer{margin-top:auto;padding:10px 8px;border-top:1px solid rgba(255,255,255,.08)}
+.nav-item i {font-size:16px;width:18px;flex-shrink:0}
+.sidebar-backup{padding:12px 10px;display:flex;flex-direction:column;gap:6px;border-top:1px solid rgba(255,255,255,.08);background: rgba(0,0,0,0.2);}
+.sb-status{font-size:10px;color:rgba(255,255,255,.4);padding:0 2px 2px;display:flex;align-items:center;gap:5px}
+.sb-btn{display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:rgba(255,255,255,.8);font-size:11.5px;cursor:pointer;font-family:inherit;transition:all .15s;width:100%;text-align:right}
+.sb-btn:hover{background:rgba(255,255,255,.12);color:#fff}
+.sb-btn-gold{border-color:rgba(201,168,76,.4);background:rgba(201,168,76,.14);color:#C9A84C}
+.sb-btn-gold:hover{background:rgba(201,168,76,.24)}
+.sb-btn-danger{border-color:rgba(226,75,74,.35);background:rgba(226,75,74,.1);color:#ff9d9d}
+.sb-btn-danger:hover{background:rgba(226,75,74,.2)}
+.sidebar-footer{padding:10px 8px;border-top:1px solid rgba(255,255,255,.08)}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .topbar{background:#fff;border-bottom:1px solid #e8e8ec;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.topbar-left .page-title{font-size:16px;font-weight:600;color:#1a1a2e}
-.topbar-left .page-sub{font-size:11px;color:#888;margin-top:1px}
 .topbar-right{display:flex;align-items:center;gap:8px}
 .btn{padding:7px 14px;border-radius:8px;border:1px solid #e0e0e8;background:#fff;font-size:12px;cursor:pointer;color:#333;display:inline-flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
 .btn:hover{background:#f5f5fa}
 .btn-gold{background:#C9A84C;border-color:#C9A84C;color:#1a1a2e;font-weight:600}
 .btn-gold:hover{background:#b8973b}
-.btn-sm{padding:4px 10px;font-size:11px}
-.btn-danger{background:#fcebeb;border-color:#f7c1c1;color:#a32d2d}
+.btn-danger{background:#e24b4a;border-color:#e24b4a;color:#fff}
+.btn-danger:hover{background:#c03b3a}
+.btn-sm{padding:4px 8px;font-size:11px;border-radius:6px}
 .content{flex:1;overflow-y:auto;padding:18px 20px;background:#f0f0f5}
 .page{display:none}
 .page.active{display:block}
-
-/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
 .kpi-card{background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:14px 16px}
 .kpi-label{font-size:11px;color:#888;margin-bottom:5px;display:flex;align-items:center;gap:5px}
 .kpi-value{font-size:22px;font-weight:600;color:#1a1a2e}
-.kpi-sub{font-size:11px;color:#888;margin-top:3px}
-.green{color:#0d9e5e}.red{color:#e24b4a}.gold{color:#C9A84C}.purple{color:#4B0082}.blue{color:#185fa5}
-
-/* Cards */
 .card{background:#fff;border:1px solid #e8e8ec;border-radius:12px;padding:16px;margin-bottom:14px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .section-title{font-size:14px;font-weight:600;color:#1a1a2e}
-
-/* Table */
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:#888;border-bottom:1px solid #eee;white-space:nowrap;background:#fafafa}
-td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tbody tr:hover td{background:#fafafe}
-
-/* Badges */
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;white-space:nowrap}
+th{text-align:right;padding:8px 12px;font-size:11px;font-weight:600;color:#888;border-bottom:1px solid #eee;background:#fafafa}
+td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
 .badge-green{background:#eaf3de;color:#3b6d11}
-.badge-amber{background:#faeeda;color:#854f0b}
-.badge-red{background:#fcebeb;color:#a32d2d}
-.badge-blue{background:#e6f1fb;color:#185fa5}
 .badge-purple{background:#eeedfe;color:#534AB7}
-.badge-gray{background:#f0f0f0;color:#666}
-
-/* Forms */
 .form-group{margin-bottom:12px}
 .form-label{font-size:12px;color:#666;margin-bottom:4px;display:block;font-weight:500}
-.form-input{width:100%;padding:8px 10px;border:1px solid #e0e0e8;border-radius:8px;font-size:13px;color:#333;outline:none;font-family:inherit;background:#fff}
+.form-input{width:100%;padding:8px 10px;border:1px solid #e0e0e8;border-radius:8px;font-size:13px;color:#333;outline:none;background:#fff}
 .form-input:focus{border-color:#C9A84C;box-shadow:0 0 0 2px rgba(201,168,76,.15)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-
-/* Chart bars */
-.chart-bar{display:flex;align-items:flex-end;gap:8px;height:130px;padding-bottom:4px}
-.bar-group{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;min-width:0}
-.bar{border-radius:4px 4px 0 0;width:100%;min-height:4px;transition:height .4s}
-.bar-label{font-size:10px;color:#888;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.bar-val{font-size:10px;color:#666;font-weight:500}
-
-/* Progress */
-.progress{height:5px;background:#eee;border-radius:3px;overflow:hidden;margin-top:4px}
-.progress-fill{height:100%;border-radius:3px;transition:width .5s}
-
-/* Avatar */
-.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
-
-/* Alert */
-.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.alert-info{background:#e6f1fb;color:#185fa5;border:1px solid #b5d4f4}
-.alert-success{background:#eaf3de;color:#3b6d11;border:1px solid #c0dd97}
-.alert-warn{background:#faeeda;color:#854f0b;border:1px solid #fac775}
-
-/* Tab bar */
-.tab-bar{display:flex;gap:2px;border-bottom:1px solid #e8e8ec;margin-bottom:14px}
-.tab{padding:8px 16px;font-size:13px;cursor:pointer;border-bottom:2px solid transparent;color:#888;transition:all .15s}
-.tab.active{color:#C9A84C;border-bottom-color:#C9A84C;font-weight:600}
-
-/* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:16px;padding:24px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .modal-title{font-size:16px;font-weight:600;color:#1a1a2e}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid #f0f0f0}
-
-/* Invoice print */
-.invoice{background:#fff;border:1px solid #eee;border-radius:12px;padding:24px;font-size:12px;color:#333;line-height:1.5}
-.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #C9A84C}
-.inv-logo{font-size:20px;font-weight:800;color:#4B0082;letter-spacing:-0.5px}
-.inv-no{font-size:18px;font-weight:700;color:#4B0082;text-align:right}
-.inv-table th{background:#f5f0ff;padding:8px 10px;color:#4B0082;font-size:11px}
-.inv-table td{padding:8px 10px;border-bottom:1px solid #f5f5f5}
-.inv-total-box{background:linear-gradient(135deg,#4B0082,#7F77DD);color:#fff;padding:14px 18px;border-radius:10px;margin-top:10px}
-.qr-wrap{display:flex;align-items:center;gap:14px;margin-top:14px;padding:12px;background:#f9f5ff;border-radius:8px}
-.qr-placeholder{width:64px;height:64px;background:#fff;border:1px solid #ddd;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;color:#4B0082;text-align:center;padding:4px;font-weight:600}
-
-/* RTL / Arabic support */
-body.ar { direction: rtl; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
-body.ar .sidebar { order: 2; border-right: none; border-left: 1px solid rgba(255,255,255,.1); }
-body.ar .main { order: 1; }
-body.ar th, body.ar td { text-align: right; }
-body.ar .nav-badge { margin-left: 0; margin-right: auto; }
-#lang-btn { position: fixed; bottom: 20px; right: 20px; z-index: 999; background: #C9A84C; color: #1a1a2e; border: none; border-radius: 50%; width: 48px; height: 48px; font-size: 18px; cursor: pointer; box-shadow: 0 4px 16px rgba(201,168,76,.4); display: flex; align-items: center; justify-content: center; font-weight: 700; }
-body.ar #lang-btn { right: auto; left: 20px; }
-/* Backup bar */
-#backup-bar { background: #1a1a2e; color: #fff; padding: 6px 20px; display: flex; align-items: center; gap: 10px; font-size: 12px; flex-shrink: 0; }
-#backup-bar span { margin-right: auto; color: rgba(255,255,255,.5); }
-body.ar #backup-bar span { margin-right: 0; margin-left: auto; }
-
+#login-screen{position:fixed;inset:0;background:#1a1a2e;z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
+.login-box{background:#fff;border-radius:16px;padding:32px 28px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
+.green{color:#0d9e5e}.red{color:#e24b4a}.gold{color:#C9A84C}.purple{color:#4B0082}.blue{color:#185fa5}
+.font-600{font-weight: 600;}
+.flex-gap{display:flex;gap:4px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toggle-group{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 </style>
 </head>
 <body>
 
-<div id="backup-bar">
-  <span id="bbar-saved">● Auto-save: ON</span>
-  <button class="btn" style="padding:4px 12px;font-size:11px;color:#fff;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08)" onclick="exportData()">⬇ Export Backup</button>
-  <label class="btn" style="padding:4px 12px;font-size:11px;color:#fff;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08);cursor:pointer">⬆ Import Backup<input type="file" accept=".json" style="display:none" onchange="importData(event)"></label>
-  <button class="btn" style="padding:4px 12px;font-size:11px;background:rgba(201,168,76,.2);border-color:#C9A84C;color:#C9A84C" onclick="showPage('reports',null)">📊 Reports</button>
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:2px">تسجيل الدخول للنظام المالي</div>
+    <div style="font-size:12px;color:#888;margin-bottom:20px">Glamour Suite v3.0</div>
+    <form onsubmit="event.preventDefault(); doLogin();">
+      <div class="form-group" style="text-align:right">
+        <label class="form-label">اسم المستخدم</label>
+        <input type="text" class="form-input" id="login-username" value="admin">
+      </div>
+      <div class="form-group" style="text-align:right; margin-bottom:20px">
+        <label class="form-label">كلمة المرور</label>
+        <input type="password" class="form-input" id="login-password" value="1234">
+      </div>
+      <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center; padding:10px">دخول النظام</button>
+    </form>
+  </div>
 </div>
-<button id="lang-btn" onclick="toggleLang()" title="تبديل اللغة / Toggle Language">ع</button>
 
-<div class="app" id="main-app" style="height:calc(100vh - 36px)">
+<!-- MAIN APPLICATION -->
+<div class="app" id="main-app">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-row">
-      <div class="logo-icon"><i class="ti ti-scissors" style="color:#1a1a2e;font-size:16px"></i></div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-row">
+        <div class="logo-icon"><i class="ti ti-scissors" style="color:#1a1a2e;font-size:16px"></i></div>
+        <div>
+          <div class="salon-name">Glamour Studio</div>
+          <div class="salon-sub">النظام المالي الموحد</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-section">الرئيسية</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="ti ti-layout-dashboard"></i><span>لوحة التحكم</span></div>
+
+    <div class="nav-section">شاشات العمليات التشغيلية</div>
+    <div class="nav-item" onclick="showPage('sales',this)"><i class="ti ti-notebook"></i><span>فواتير المبيعات اليومية</span></div>
+    <div class="nav-item" onclick="showPage('expenses',this)"><i class="ti ti-credit-card"></i><span>تسجيل المصاريف</span></div>
+    <div class="nav-item" onclick="showPage('tips',this)"><i class="ti ti-coin"></i><span>إكراميات الموظفين</span></div>
+
+    <div class="nav-section">المدخلات والمحاسبة بالدليل</div>
+    <div class="nav-item" onclick="showPage('employees',this)"><i class="ti ti-users"></i><span>إدارة الموظفين</span></div>
+    <div class="nav-item" onclick="showPage('accounts',this)"><i class="ti ti-list-numbers"></i><span>شجرة الحسابات المالية</span></div>
+    <div class="nav-item" onclick="showPage('costcenters',this)"><i class="ti ti-building-store"></i><span>مراكز الكلفة</span></div>
+    <div class="nav-item" onclick="showPage('ledger',this)"><i class="ti ti-book"></i><span>القيود المزدوجة العامة</span></div>
+
+    <div class="nav-section">التقارير والتحكم</div>
+    <div class="nav-item" onclick="showPage('reports',this)"><i class="ti ti-chart-bar"></i><span>القوائم المالية الختامية</span></div>
+    <div class="nav-item" onclick="showPage('settings',this)"><i class="ti ti-settings"></i><span>إعدادات النظام والأمان</span></div>
+
+    <!-- BACKUP CONTAINER WITH ADVANCED TOGGLE -->
+    <div class="sidebar-backup" id="sidebar-backup-section">
+      <div class="sb-status">● أدوات قاعدة البيانات</div>
+      <button class="sb-btn sb-btn-gold" id="btn-side-sample" onclick="loadSampleData()"><i class="ti ti-database-import"></i><span>تحميل بيانات تجريبية</span></button>
+      <button class="sb-btn sb-btn-danger" id="btn-side-purge" onclick="resetAllData()"><i class="ti ti-trash"></i><span>تصفير وتطهير النظام</span></button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="doLogout()" style="color:#ff9d9d"><i class="ti ti-logout"></i><span>تسجيل الخروج</span></div>
+    </div>
+  </div>
+
+  <!-- MAIN VIEW -->
+  <div class="main">
+    <div class="topbar">
       <div>
-        <div class="salon-name">Glamour Studio</div>
-        <div class="salon-sub">صالون حلاقة ومكياج</div>
+        <div class="page-title" id="page-title">لوحة التحكم القيادية</div>
+        <div style="font-size:11px;color:#888;margin-top:1px">عمان، الأردن · العملة: الدينار الأردني (JD)</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-gold" onclick="openInvModal()"><i class="ti ti-plus"></i>فاتورة مبيعات جديدة</button>
       </div>
     </div>
-    <div class="version">Accounting System · JD · 2025</div>
-  </div>
 
-  <div class="nav-section">Main</div>
-  <div class="nav-item active" onclick="showPage('dashboard',this)"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
-  <div class="nav-item" onclick="showPage('journal',this)"><i class="ti ti-notebook"></i>Daily Journal</div>
-  <div class="nav-item" onclick="showPage('invoices',this)"><i class="ti ti-file-invoice"></i>Invoices <span class="nav-badge">3</span></div>
+    <div class="content">
 
-  <div class="nav-section">Finance</div>
-  <div class="nav-item" onclick="showPage('expenses',this)"><i class="ti ti-credit-card"></i>Expenses</div>
-  <div class="nav-item" onclick="showPage('purchases',this)"><i class="ti ti-shopping-cart"></i>Purchases</div>
-  <div class="nav-item" onclick="showPage('ledger',this)"><i class="ti ti-book"></i>Journal Entries</div>
-  <div class="nav-item" onclick="showPage('accounts',this)"><i class="ti ti-list-numbers"></i>Chart of Accounts</div>
-
-  <div class="nav-section">Operations</div>
-  <div class="nav-item" onclick="showPage('staff',this)"><i class="ti ti-users"></i>Staff & Tips</div>
-  <div class="nav-item" onclick="showPage('inventory',this)"><i class="ti ti-package"></i>Inventory</div>
-  <div class="nav-item" onclick="showPage('reports',this)"><i class="ti ti-chart-bar"></i>Reports</div>
-  <div class="nav-item" onclick="showPage('budgets',this)"><i class="ti ti-target"></i>Budgets</div>
-
-  <div class="sidebar-footer">
-    <div class="nav-item" onclick="showPage('settings',this)"><i class="ti ti-settings"></i>Settings</div>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title" id="page-title">Dashboard</div>
-      <div class="page-sub">June 2025 · Amman, Jordan · Jordanian Dinar (JD)</div>
-    </div>
-    <div class="topbar-right">
-      <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>Print</button>
-      <button class="btn btn-gold" onclick="openInvModal()"><i class="ti ti-plus"></i>New Invoice</button>
-    </div>
-  </div>
-
-  <div class="content">
-
-    <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
-      <div class="kpi-grid">
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-trending-up" style="color:#0d9e5e"></i>Revenue</div><div class="kpi-value green">2,840.000</div><div class="kpi-sub green">↑ +14% vs last month</div></div>
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-credit-card" style="color:#e24b4a"></i>Expenses</div><div class="kpi-value red">1,275.000</div><div class="kpi-sub red">↑ +3% vs last month</div></div>
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-coin" style="color:#C9A84C"></i>Net Profit</div><div class="kpi-value green">1,565.000</div><div class="kpi-sub">Margin 55.1%</div></div>
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-gift" style="color:#7F77DD"></i>Staff Tips</div><div class="kpi-value gold">312.000</div><div class="kpi-sub">8 staff members</div></div>
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-shopping-cart" style="color:#185fa5"></i>Purchases</div><div class="kpi-value blue">380.000</div><div class="kpi-sub">12 orders this month</div></div>
-        <div class="kpi-card"><div class="kpi-label"><i class="ti ti-users" style="color:#D4537E"></i>Clients Served</div><div class="kpi-value purple">148</div><div class="kpi-sub green">↑ +22 new clients</div></div>
-      </div>
-
-      <div class="grid-2">
-        <div class="card">
-          <div class="section-header"><div class="section-title">Revenue by Service Type</div></div>
-          <div class="chart-bar" id="dash-chart"></div>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
-            <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#C9A84C;display:inline-block"></span>Hair 1,450 JD</span>
-            <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#7F77DD;display:inline-block"></span>Makeup 780 JD</span>
-            <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#1D9E75;display:inline-block"></span>Nails 320 JD</span>
-            <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#D4537E;display:inline-block"></span>Bridal 290 JD</span>
-          </div>
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">إجمالي المبيعات</div><div class="kpi-value green" id="dash-kpi-rev">0.000</div></div>
+          <div class="kpi-card"><div class="kpi-label">المصاريف التشغيلية</div><div class="kpi-value red" id="dash-kpi-exp">0.000</div></div>
+          <div class="kpi-card"><div class="kpi-label">إجمالي الإكراميات</div><div class="kpi-value purple" id="dash-kpi-tips">0.000</div></div>
+          <div class="kpi-card"><div class="kpi-label">رصيد الصندوق النقدي</div><div class="kpi-value gold" id="dash-kpi-cash">0.000</div></div>
         </div>
         <div class="card">
-          <div class="section-header"><div class="section-title">Recent Transactions</div><button class="btn btn-sm" onclick="showPage('journal',document.querySelectorAll('.nav-item')[1])">View all</button></div>
-          <div class="table-wrap"><table><thead><tr><th>Client</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead><tbody id="dash-tx"></tbody></table></div>
+          <div class="section-title" style="margin-bottom:10px">أهلاً بك في نظام الإدارة الشامل</div>
+          <p style="font-size:13px; color:#666">تم تحديث النظام ليدعم التحكم الكامل بالمستخدمين، تعديل وحذف بطاقات الموظفين، والتحكم المطلق بظهور وإخفاء أدوات المطورين والنسخ الاحتياطي لمنع التلاعب.</p>
         </div>
       </div>
 
-      <div class="grid-2">
+      <!-- SALES -->
+      <div class="page" id="page-sales">
         <div class="card">
-          <div class="section-header"><div class="section-title">Staff Performance — Tips</div></div>
-          <div id="dash-staff"></div>
+          <div class="section-header"><div class="section-title">شاشة حركة فواتير ومبيعات الخدمات اليومية</div><button class="btn btn-gold" onclick="openInvModal()">+ فاتورة مبيعات</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>رقم الفاتورة</th><th>الزبون</th><th>الخدمة</th><th>المبلغ (JD)</th></tr></thead>
+              <tbody id="j-tbody"></tbody>
+            </table>
+          </div>
         </div>
+      </div>
+
+      <!-- EXPENSES -->
+      <div class="page" id="page-expenses">
         <div class="card">
-          <div class="section-header"><div class="section-title">Expense Breakdown</div></div>
-          <div id="dash-exp"></div>
+          <div class="section-header"><div class="section-title">شاشة تسجيل المصاريف الإدارية والتشغيلية</div><button class="btn btn-gold" onclick="openAddExpense()">+ إضافة حركة مصروف</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>التصنيف</th><th>البيان والشرح</th><th>مركز الكلفة</th><th>المبلغ (JD)</th></tr></thead>
+              <tbody id="exp-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- JOURNAL -->
-    <div class="page" id="page-journal">
-      <div class="card" style="margin-bottom:14px">
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <input type="text" class="form-input" placeholder="Search client, service, staff..." style="flex:1;min-width:180px;max-width:280px" oninput="filterJournal(this.value)">
-          <select class="form-input" style="width:160px" onchange="filterJournalService(this.value)">
-            <option value="">All Services</option>
-            <option>Hair Color</option><option>Haircut</option><option>Makeup</option>
-            <option>Bridal Package</option><option>Nail Service</option><option>Waxing</option><option>Facial</option>
-          </select>
-          <button class="btn btn-gold" onclick="openAddJournal()"><i class="ti ti-plus"></i>Add Entry</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="section-header">
-          <div class="section-title">Daily Journal — All Transactions</div>
-          <div style="font-size:12px;color:#888">Total: <strong id="j-total" class="green">0.000 JD</strong></div>
-        </div>
-        <div class="table-wrap"><table><thead><tr><th>#</th><th>Date</th><th>Receipt #</th><th>Client</th><th>Service</th><th>Staff</th><th>Payment</th><th>Amount</th><th>Tax</th><th>Tips</th><th>Total</th><th>Status</th><th></th></tr></thead><tbody id="j-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- INVOICES -->
-    <div class="page" id="page-invoices">
-      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
-        <div class="kpi-card"><div class="kpi-label">Total Invoiced</div><div class="kpi-value" style="font-size:18px">2,840.000 JD</div></div>
-        <div class="kpi-card"><div class="kpi-label">Paid</div><div class="kpi-value green" style="font-size:18px">2,450.000 JD</div></div>
-        <div class="kpi-card"><div class="kpi-label">Pending</div><div class="kpi-value gold" style="font-size:18px">390.000 JD</div></div>
-        <div class="kpi-card"><div class="kpi-label">Overdue</div><div class="kpi-value red" style="font-size:18px">0.000 JD</div></div>
-      </div>
-      <div class="card">
-        <div class="section-header"><div class="section-title">Invoices & Quotes</div><button class="btn btn-gold" onclick="openInvModal()"><i class="ti ti-plus"></i>New Invoice</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Invoice #</th><th>Date</th><th>Client</th><th>Service</th><th>Subtotal</th><th>Tax</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody id="inv-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- EXPENSES -->
-    <div class="page" id="page-expenses">
-      <div class="card" style="margin-bottom:14px">
-        <div class="form-row-3">
-          <div class="kpi-card" style="border:none;background:#fafafa;margin:0"><div class="kpi-label">Total Expenses</div><div class="kpi-value red" style="font-size:18px" id="exp-total">0.000 JD</div></div>
-          <div class="kpi-card" style="border:none;background:#fafafa;margin:0"><div class="kpi-label">Largest Category</div><div class="kpi-value" style="font-size:16px">Rent — 800.000 JD</div></div>
-          <div class="kpi-card" style="border:none;background:#fafafa;margin:0"><div class="kpi-label">Daily Average</div><div class="kpi-value" style="font-size:16px">42.500 JD</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="section-header"><div class="section-title">Expenses Register</div><button class="btn btn-gold" onclick="openAddExpense()"><i class="ti ti-plus"></i>Add Expense</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Vendor / Payee</th><th>Payment</th><th>Amount (JD)</th><th>Receipt #</th></tr></thead><tbody id="exp-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- PURCHASES -->
-    <div class="page" id="page-purchases">
-      <div class="card">
-        <div class="section-header"><div class="section-title">Purchases & Inventory Orders</div><button class="btn btn-gold" onclick="openAddPurchase()"><i class="ti ti-plus"></i>New Purchase</button></div>
-        <div class="table-wrap"><table><thead><tr><th>PO #</th><th>Date</th><th>Supplier</th><th>Item / Product</th><th>Category</th><th>Qty</th><th>Unit Price</th><th>Total (JD)</th><th>Status</th></tr></thead><tbody id="pur-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- LEDGER -->
-    <div class="page" id="page-ledger">
-      <div class="alert alert-info"><i class="ti ti-info-circle"></i><span>Double-entry bookkeeping: every Debit must equal every Credit. Keep the balance at <strong>0.000 JD</strong>.</span></div>
-      <div class="card">
-        <div class="section-header"><div class="section-title">Journal Entries — General Ledger</div><button class="btn btn-gold" onclick="openAddLedger()"><i class="ti ti-plus"></i>New Entry</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Date</th><th>Entry #</th><th>Account Name</th><th>Code</th><th>Description</th><th style="color:#0d9e5e">Debit (JD)</th><th style="color:#e24b4a">Credit (JD)</th><th>Ref</th></tr></thead><tbody id="led-tbody"></tbody></table></div>
-        <div style="display:flex;justify-content:flex-end;gap:24px;padding:12px 0 2px;border-top:1px solid #f0f0f0;margin-top:8px">
-          <span style="font-size:13px;color:#666">Total Debits: <strong class="green" id="led-dr">0.000 JD</strong></span>
-          <span style="font-size:13px;color:#666">Total Credits: <strong class="red" id="led-cr">0.000 JD</strong></span>
-          <span style="font-size:13px;color:#666">Balance: <strong id="led-bal">0.000 JD</strong></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- CHART OF ACCOUNTS -->
-    <div class="page" id="page-accounts">
-      <div class="tab-bar" id="acc-tabs">
-        <div class="tab active" onclick="filterAccounts('all',this)">All Accounts</div>
-        <div class="tab" onclick="filterAccounts('Asset',this)">Assets</div>
-        <div class="tab" onclick="filterAccounts('Liability',this)">Liabilities</div>
-        <div class="tab" onclick="filterAccounts('Equity',this)">Equity</div>
-        <div class="tab" onclick="filterAccounts('Revenue',this)">Revenue</div>
-        <div class="tab" onclick="filterAccounts('Expense',this)">Expenses</div>
-      </div>
-      <div class="card">
-        <div class="section-header"><div class="section-title">Chart of Accounts</div><button class="btn btn-gold"><i class="ti ti-plus"></i>Add Account</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Code</th><th>Account Name</th><th>Type</th><th>Category</th><th>Normal Balance</th><th>Current Balance (JD)</th></tr></thead><tbody id="acc-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- STAFF & TIPS -->
-    <div class="page" id="page-staff">
-      <div class="grid-2">
-        <div class="card" id="staff-overview">
-          <div class="section-header"><div class="section-title">Staff Overview</div><button class="btn btn-gold btn-sm" onclick="openAddTip()"><i class="ti ti-plus"></i>Record Tip</button></div>
-        </div>
+      <!-- TIPS -->
+      <div class="page" id="page-tips">
         <div class="card">
-          <div class="section-title" style="margin-bottom:12px">Tips & Gratuities Log</div>
-          <div class="table-wrap"><table><thead><tr><th>Date</th><th>Staff</th><th>Client</th><th>Service</th><th>Tip (JD)</th></tr></thead><tbody id="tips-tbody"></tbody></table></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- INVENTORY -->
-    <div class="page" id="page-inventory">
-      <div class="alert alert-warn" id="inv-alert" style="display:none"><i class="ti ti-alert-triangle"></i><span id="inv-alert-msg"></span></div>
-      <div class="card">
-        <div class="section-header"><div class="section-title">Inventory Tracking</div><button class="btn btn-gold"><i class="ti ti-plus"></i>Add Item</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Item Name</th><th>Category</th><th>In Stock</th><th>Min Level</th><th>Unit Cost (JD)</th><th>Total Value (JD)</th><th>Status</th></tr></thead><tbody id="inv-tbody2"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- REPORTS -->
-    <div class="page" id="page-reports">
-      <div class="card">
-        <div class="section-title" style="margin-bottom:16px">Available Reports</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('pl')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#f3eeff;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-chart-pie" style="color:#4B0082;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">P&L Statement</div><div style="font-size:11px;color:#888">Profit & Loss</div></div>
-            </div>
-            <div style="font-size:11px;color:#4B0082;font-weight:500">View Report →</div>
-          </div>
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('bs')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#e6f1fb;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-scale" style="color:#185fa5;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">Balance Sheet</div><div style="font-size:11px;color:#888">Assets & Liabilities</div></div>
-            </div>
-            <div style="font-size:11px;color:#185fa5;font-weight:500">View Report →</div>
-          </div>
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('cf')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#eaf3de;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-cash" style="color:#3b6d11;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">Cash Flow</div><div style="font-size:11px;color:#888">Cash in & out</div></div>
-            </div>
-            <div style="font-size:11px;color:#3b6d11;font-weight:500">View Report →</div>
-          </div>
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('staff')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#faeeda;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-users" style="color:#854f0b;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">Staff Report</div><div style="font-size:11px;color:#888">Performance & Tips</div></div>
-            </div>
-            <div style="font-size:11px;color:#854f0b;font-weight:500">View Report →</div>
-          </div>
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('inv')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#fbeaf0;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-package" style="color:#993556;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">Inventory Report</div><div style="font-size:11px;color:#888">Stock Valuation</div></div>
-            </div>
-            <div style="font-size:11px;color:#993556;font-weight:500">View Report →</div>
-          </div>
-          <div class="card" style="margin:0;cursor:pointer;border:1px solid #e8e8ec" onclick="showReport('tax')">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:36px;height:36px;background:#fcebeb;border-radius:9px;display:flex;align-items:center;justify-content:center"><i class="ti ti-receipt-tax" style="color:#a32d2d;font-size:18px"></i></div>
-              <div><div style="font-weight:600;font-size:13px">Tax Summary</div><div style="font-size:11px;color:#888">GST / Sales Tax</div></div>
-            </div>
-            <div style="font-size:11px;color:#a32d2d;font-weight:500">View Report →</div>
+          <div class="section-header"><div class="section-title">شاشة تسجيل وإثبات إكراميات الموظفين (Tips)</div><button class="btn btn-gold" onclick="openAddTip()">+ تسجيل إكرامية جديدة</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>الموظف المستلم</th><th>البيان</th><th>المبلغ (JD)</th></tr></thead>
+              <tbody id="tips-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
-      <div class="card" id="report-output" style="display:none">
-        <div class="section-header">
-          <div class="section-title" id="report-title"></div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-sm" onclick="window.print()"><i class="ti ti-printer"></i>Print</button>
-            <button class="btn btn-sm" onclick="document.getElementById('report-output').style.display='none'"><i class="ti ti-x"></i>Close</button>
-          </div>
-        </div>
-        <div id="report-content"></div>
-      </div>
-    </div>
 
-    <!-- BUDGETS -->
-    <div class="page" id="page-budgets">
-      <div class="card">
-        <div class="section-header"><div class="section-title">Budget Management</div><button class="btn btn-gold"><i class="ti ti-plus"></i>Set Budget</button></div>
-        <div class="table-wrap"><table><thead><tr><th>Category</th><th>Budget (JD)</th><th>Actual (JD)</th><th>Remaining (JD)</th><th>% Used</th><th>Status</th></tr></thead><tbody id="bud-tbody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div class="page" id="page-settings">
-      <div style="max-width:480px">
+      <!-- EMPLOYEES (WITH EDIT & DELETE) -->
+      <div class="page" id="page-employees">
         <div class="card">
-          <div class="section-title" style="margin-bottom:16px">Business Information</div>
-          <div class="form-group"><div class="form-label">Business Name</div><input class="form-input" value="Glamour Salon & Makeup Studio"></div>
-          <div class="form-group"><div class="form-label">Owner Name</div><input class="form-input" value="Jefer"></div>
-          <div class="form-group"><div class="form-label">Address</div><input class="form-input" value="Amman, Jordan"></div>
-          <div class="form-row">
-            <div class="form-group"><div class="form-label">Phone</div><input class="form-input" value="+962 79 000 0000"></div>
-            <div class="form-group"><div class="form-label">Email</div><input class="form-input" value="info@glamoursalon.jo"></div>
+          <div class="section-header"><div class="section-title">بطاقات سجل وإدارة الموظفين داخل الصالون</div><button class="btn btn-gold" onclick="openAddEmployee()">+ إضافة موظف جديد</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>كود الموظف</th><th>اسم الموظف</th><th>المسمى الوظيفي</th><th>الإكراميات المحققة</th><th>خيارات التحكم</th></tr></thead>
+              <tbody id="emp-tbody"></tbody>
+            </table>
           </div>
-          <div class="form-row">
-            <div class="form-group"><div class="form-label">Currency</div><select class="form-input"><option selected>JD — Jordanian Dinar</option><option>USD</option><option>EUR</option></select></div>
-            <div class="form-group"><div class="form-label">Tax Rate (%)</div><input class="form-input" type="number" value="16" step="0.1"></div>
-          </div>
-          <div class="form-row">
-            <div class="form-group"><div class="form-label">Invoice Prefix</div><input class="form-input" value="INV-"></div>
-            <div class="form-group"><div class="form-label">Fiscal Year Start</div><select class="form-input"><option>January</option><option>April</option><option>July</option></select></div>
-          </div>
-          <button class="btn btn-gold" style="width:100%;margin-top:4px"><i class="ti ti-check"></i>Save Settings</button>
         </div>
       </div>
-    </div>
 
-  </div>
-</div>
-</div>
-
-<!-- INVOICE MODAL -->
-<div class="modal-overlay" id="inv-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title"><i class="ti ti-file-invoice" style="color:#C9A84C"></i> Create New Invoice</div>
-      <button class="btn btn-sm" onclick="closeModal('inv-modal')"><i class="ti ti-x"></i></button>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Client Name *</div><input class="form-input" id="inv-client" placeholder="Full name"></div>
-      <div class="form-group"><div class="form-label">Invoice Date *</div><input class="form-input" type="date" id="inv-date"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Service / Item</div>
-        <select class="form-input" id="inv-service">
-          <option>Hair Color</option><option>Haircut</option><option>Makeup</option>
-          <option>Bridal Package</option><option>Nail Service</option><option>Facial</option><option>Waxing</option><option>Hair Treatment</option><option>Other</option>
-        </select>
+      <!-- CHART OF ACCOUNTS -->
+      <div class="page" id="page-accounts">
+        <div class="card">
+          <div class="section-header"><div class="section-title">دليل وشجرة الحسابات المالية العامة</div><button class="btn btn-gold" onclick="openAddAccount()">+ زرع حساب بالشجرة</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>كود الحساب</th><th>اسم الحساب المحاسبي</th><th>النوع الرئيسي</th><th>التصنيف</th><th>الرصيد الحالي (JD)</th></tr></thead>
+              <tbody id="acc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="form-group"><div class="form-label">Amount (JD) *</div><input class="form-input" type="number" id="inv-amount" placeholder="0.000" step="0.001" min="0"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Tax Rate (%)</div><input class="form-input" type="number" id="inv-tax" value="16" step="0.1"></div>
-      <div class="form-group"><div class="form-label">Discount (JD)</div><input class="form-input" type="number" id="inv-disc" value="0" step="0.001"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Payment Method</div>
-        <select class="form-input" id="inv-pay"><option>Cash</option><option>Credit Card</option><option>Debit Card</option><option>Bank Transfer</option></select>
+
+      <!-- COST CENTERS -->
+      <div class="page" id="page-costcenters">
+        <div class="card">
+          <div class="section-header"><div class="section-title">هيكل وتوزيع مراكز الكلفة المعتمدة</div><button class="btn btn-gold" onclick="openAddCostCenter()">+ إضافة مركز كلفة</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>كود المركز</th><th>اسم مركز الكلفة</th><th>الوصف والنطاق الإداري</th></tr></thead>
+              <tbody id="cc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="form-group"><div class="form-label">Staff Member</div><input class="form-input" id="inv-staff" placeholder="Staff name"></div>
-    </div>
-    <div class="form-group"><div class="form-label">Notes</div><textarea class="form-input" id="inv-notes" rows="2" placeholder="Additional notes..."></textarea></div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('inv-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="createInvoice()"><i class="ti ti-file-check"></i>Generate Invoice</button>
+
+      <!-- LEDGER -->
+      <div class="page" id="page-ledger">
+        <div class="card">
+          <div class="section-header"><div class="section-title">سجل القيود العامة المزدوجة المتوازنة</div><button class="btn btn-gold" onclick="openAddLedger()">+ إنشاء قيد يدوي</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>رقم القيد</th><th>المدين (من)</th><th>الدائن (إلى)</th><th>البيان التفصيلي</th><th>المبلغ (JD)</th><th>مركز الكلفة</th></tr></thead>
+              <tbody id="led-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS -->
+      <div class="page" id="page-reports">
+        <div class="card" style="display: flex; gap: 10px;">
+          <button class="btn btn-gold" onclick="generateIncomeStatement()">توليد قائمة الدخل (Profit & Loss)</button>
+          <button class="btn btn-gold" onclick="generateBalanceSheet()">توليد الميزانية العمومية (Balance Sheet)</button>
+        </div>
+        <div class="card" id="report-result-panel" style="display:none"></div>
+      </div>
+
+      <!-- SETTINGS & SECURITY (COMPLETELY REMODELD) -->
+      <div class="page" id="page-settings">
+        <div class="grid-2">
+          
+          <!-- SYSTEM APPEARANCE & SECURITY CONFIG -->
+          <div class="card">
+            <div class="section-title" style="margin-bottom:15px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">تخصيص الخصوصية والواجهات</div>
+            
+            <div class="toggle-group">
+              <input type="checkbox" id="cfg-show-backup" checked onchange="toggleSecurityViews()">
+              <label class="form-label" style="margin:0; cursor:pointer">إظهار حاوية أدوات قاعدة البيانات والنسخ بالكامل</label>
+            </div>
+            
+            <div class="toggle-group">
+              <input type="checkbox" id="cfg-show-sample" checked onchange="toggleSecurityViews()">
+              <label class="form-label" style="margin:0; cursor:pointer">إظهار زر "تحميل بيانات تجريبية"</label>
+            </div>
+
+            <div class="form-group" style="margin-top:15px">
+              <label class="form-label">لغة واجهة المستخدم</label>
+              <select class="form-input" id="setting-lang">
+                <option value="ar">العربية (RTL) - الافتراضية</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- USERS MANAGEMENT & PASSWORD CHANGE -->
+          <div class="card">
+            <div class="section-title" style="margin-bottom:15px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">تغيير كلمة المرور للمسؤول الحالي</div>
+            <div class="form-group">
+              <label class="form-label">كلمة المرور الجديدة لـ (admin)</label>
+              <input type="password" class="form-input" id="sys-admin-pass" placeholder="اتركها فارغة إذا لم ترغب بالتغيير">
+            </div>
+            <button class="btn btn-gold btn-sm" onclick="changeAdminPassword()">تحديث كلمة المرور</button>
+
+            <div class="section-title" style="margin-top:20px; margin-bottom:10px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">إضافة مستخدم جديد للنظام</div>
+            <div class="grid-2">
+              <div class="form-group"><label class="form-label">اسم المستخدم</label><input class="form-input" id="new-user-name" placeholder="User"></div>
+              <div class="form-group"><label class="form-label">كلمة المرور</label><input class="form-input" type="password" id="new-user-pass" placeholder="****"></div>
+            </div>
+            <button class="btn btn-gold btn-sm" style="width:100%; justify-content:center" onclick="addNewUser()">+ زرع المستخدم الجديد</button>
+
+            <div style="margin-top:15px">
+              <div class="form-label" style="font-weight:bold">المستخدمون النشطون حالياً:</div>
+              <table style="margin-top:5px; background:#fafafa; border-radius:8px">
+                <thead><tr><th>المستخدم</th><th>خيارات</th></tr></thead>
+                <tbody id="users-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- INVOICE PREVIEW MODAL -->
-<div class="modal-overlay" id="inv-preview-modal">
-  <div class="modal" style="width:560px">
-    <div class="modal-header">
-      <div class="modal-title">Invoice Preview</div>
-      <button class="btn btn-sm" onclick="closeModal('inv-preview-modal')"><i class="ti ti-x"></i></button>
-    </div>
-    <div id="inv-preview"></div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('inv-preview-modal')">Close</button>
-      <button class="btn btn-gold" onclick="window.print()"><i class="ti ti-printer"></i>Print / Save PDF</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD JOURNAL MODAL -->
-<div class="modal-overlay" id="j-modal">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add Journal Entry</div><button class="btn btn-sm" onclick="closeModal('j-modal')"><i class="ti ti-x"></i></button></div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Date</div><input class="form-input" type="date" id="j-date"></div>
-      <div class="form-group"><div class="form-label">Client Name</div><input class="form-input" id="j-client" placeholder="Client name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Service</div>
-        <select class="form-input" id="j-service"><option>Hair Color</option><option>Haircut</option><option>Makeup</option><option>Bridal Package</option><option>Nail Service</option><option>Facial</option><option>Waxing</option></select>
-      </div>
-      <div class="form-group"><div class="form-label">Staff Member</div><input class="form-input" id="j-staff" placeholder="Staff name"></div>
-    </div>
-    <div class="form-row-3">
-      <div class="form-group"><div class="form-label">Amount (JD)</div><input class="form-input" type="number" id="j-amount" step="0.001" min="0"></div>
-      <div class="form-group"><div class="form-label">Tips (JD)</div><input class="form-input" type="number" id="j-tips" value="0" step="0.001" min="0"></div>
-      <div class="form-group"><div class="form-label">Payment</div><select class="form-input" id="j-pay2"><option>Cash</option><option>Credit Card</option><option>Bank Transfer</option></select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('j-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveJournal()"><i class="ti ti-check"></i>Save Entry</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD EXPENSE MODAL -->
-<div class="modal-overlay" id="exp-modal">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add Expense</div><button class="btn btn-sm" onclick="closeModal('exp-modal')"><i class="ti ti-x"></i></button></div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Date</div><input class="form-input" type="date" id="e-date"></div>
-      <div class="form-group"><div class="form-label">Category</div>
-        <select class="form-input" id="e-cat"><option>Rent</option><option>Electricity</option><option>Water</option><option>Internet</option><option>Staff Salary</option><option>Marketing</option><option>Equipment</option><option>Cleaning</option><option>Consumables</option><option>Insurance</option><option>Maintenance</option><option>Other</option></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Description</div><input class="form-input" id="e-desc" placeholder="Description"></div>
-      <div class="form-group"><div class="form-label">Vendor / Payee</div><input class="form-input" id="e-vendor" placeholder="Vendor name"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Amount (JD)</div><input class="form-input" type="number" id="e-amount" step="0.001" min="0"></div>
-      <div class="form-group"><div class="form-label">Payment Method</div><select class="form-input" id="e-pay"><option>Cash</option><option>Credit Card</option><option>Bank Transfer</option></select></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('exp-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveExpense()"><i class="ti ti-check"></i>Save Expense</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD TIP MODAL -->
-<div class="modal-overlay" id="tip-modal">
-  <div class="modal" style="width:420px">
-    <div class="modal-header"><div class="modal-title">Record Staff Tip</div><button class="btn btn-sm" onclick="closeModal('tip-modal')"><i class="ti ti-x"></i></button></div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Date</div><input class="form-input" type="date" id="t-date"></div>
-      <div class="form-group"><div class="form-label">Staff Member</div>
-        <select class="form-input" id="t-staff"><option>Nour</option><option>Lina</option><option>Dina</option><option>Sara</option></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><div class="form-label">Client Name</div><input class="form-input" id="t-client" placeholder="Client name"></div>
-      <div class="form-group"><div class="form-label">Service</div><input class="form-input" id="t-service" placeholder="Service provided"></div>
-    </div>
-    <div class="form-group"><div class="form-label">Tip Amount (JD)</div><input class="form-input" type="number" id="t-amount" step="0.001" min="0" placeholder="0.000"></div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('tip-modal')">Cancel</button>
-      <button class="btn btn-gold" onclick="saveTip()"><i class="ti ti-check"></i>Save Tip</button>
-    </div>
-  </div>
+<!-- OVERLAY MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal-content"></div>
 </div>
 
 <script>
-const D = {
-  journal: [
-    {id:1,date:'2025-06-15',receipt:'REC-001',client:'Sara Ahmed',service:'Hair Color',staff:'Nour',payment:'Cash',amount:45,tax:7.2,tips:5,status:'Paid'},
-    {id:2,date:'2025-06-15',receipt:'REC-002',client:'Maya Hassan',service:'Bridal Package',staff:'Lina',payment:'Credit Card',amount:120,tax:19.2,tips:20,status:'Paid'},
-    {id:3,date:'2025-06-16',receipt:'REC-003',client:'Reem Ali',service:'Makeup',staff:'Dina',payment:'Cash',amount:35,tax:5.6,tips:3,status:'Paid'},
-    {id:4,date:'2025-06-17',receipt:'REC-004',client:'Hana Omar',service:'Nail Service',staff:'Sara',payment:'Cash',amount:25,tax:4,tips:2,status:'Paid'},
-    {id:5,date:'2025-06-18',receipt:'REC-005',client:'Layla Karim',service:'Facial',staff:'Nour',payment:'Bank Transfer',amount:55,tax:8.8,tips:0,status:'Pending'},
-    {id:6,date:'2025-06-19',receipt:'REC-006',client:'Dina Yousef',service:'Haircut',staff:'Lina',payment:'Cash',amount:18,tax:2.88,tips:2,status:'Paid'},
-  ],
-  expenses: [
-    {date:'2025-06-01',category:'Rent',desc:'June 2025 Salon Rent',vendor:'Building Owner',payment:'Bank Transfer',amount:800,receipt:'EXP-001'},
-    {date:'2025-06-03',category:'Electricity',desc:'Monthly electricity bill',vendor:'EDCO',payment:'Cash',amount:75,receipt:'EXP-002'},
-    {date:'2025-06-05',category:'Marketing',desc:'Instagram & Facebook ads',vendor:'Meta Ads',payment:'Credit Card',amount:50,receipt:'EXP-003'},
-    {date:'2025-06-07',category:'Cleaning',desc:'Salon cleaning supplies',vendor:'Clean Pro',payment:'Cash',amount:30,receipt:'EXP-004'},
-    {date:'2025-06-10',category:'Internet',desc:'Monthly internet & phone',vendor:'Zain Jordan',payment:'Bank Transfer',amount:25,receipt:'EXP-005'},
-    {date:'2025-06-15',category:'Consumables',desc:'Disposable gloves & masks',vendor:'Medical Supply',payment:'Cash',amount:20,receipt:'EXP-006'},
-  ],
-  purchases: [
-    {po:'PO-001',date:'2025-06-02',supplier:'Beauty Supply Co.',item:"L'Oreal Hair Color Set",category:'Color & Dye',qty:10,unitPrice:8.5,status:'Received'},
-    {po:'PO-001',date:'2025-06-02',supplier:'Beauty Supply Co.',item:'Wella Shampoo 1L',category:'Hair Products',qty:6,unitPrice:12,status:'Received'},
-    {po:'PO-002',date:'2025-06-04',supplier:'Makeup Wholesale',item:'Foundation Palette Set',category:'Makeup Products',qty:3,unitPrice:25,status:'Received'},
-    {po:'PO-003',date:'2025-06-06',supplier:'Clean Pro',item:'Towels Pack x10',category:'Cleaning Supplies',qty:5,unitPrice:15,status:'Pending'},
-    {po:'PO-004',date:'2025-06-10',supplier:'Nail Supplies JO',item:'OPI Nail Polish Set 12pc',category:'Nail Products',qty:2,unitPrice:45,status:'Received'},
-  ],
-  ledger: [
-    {date:'2025-06-15',entry:'JE-001',account:'Cash / Bank',code:'1001',desc:'Revenue - Sara Ahmed Hair Color',ref:'REC-001',dr:52.2,cr:0},
-    {date:'2025-06-15',entry:'JE-001',account:'Service Revenue',code:'4001',desc:'Revenue - Sara Ahmed Hair Color',ref:'REC-001',dr:0,cr:45},
-    {date:'2025-06-15',entry:'JE-001',account:'Sales Tax Payable',code:'2010',desc:'Tax on service REC-001',ref:'REC-001',dr:0,cr:7.2},
-    {date:'2025-06-15',entry:'JE-002',account:'Cash / Bank',code:'1001',desc:'Revenue - Maya Hassan Bridal',ref:'REC-002',dr:139.2,cr:0},
-    {date:'2025-06-15',entry:'JE-002',account:'Bridal Package Revenue',code:'4004',desc:'Revenue - Maya Hassan Bridal',ref:'REC-002',dr:0,cr:120},
-    {date:'2025-06-15',entry:'JE-002',account:'Sales Tax Payable',code:'2010',desc:'Tax on service REC-002',ref:'REC-002',dr:0,cr:19.2},
-    {date:'2025-06-01',entry:'JE-003',account:'Rent Expense',code:'5001',desc:'June 2025 Salon Rent',ref:'EXP-001',dr:800,cr:0},
-    {date:'2025-06-01',entry:'JE-003',account:'Cash / Bank',code:'1001',desc:'Payment for June rent',ref:'EXP-001',dr:0,cr:800},
-    {date:'2025-06-02',entry:'JE-004',account:'Inventory / Supplies',code:'1500',desc:'Purchase of hair color products',ref:'PO-001',dr:157,cr:0},
-    {date:'2025-06-02',entry:'JE-004',account:'Accounts Payable',code:'2001',desc:'Beauty Supply Co. PO-001',ref:'PO-001',dr:0,cr:157},
-  ],
-  accounts: [
-    {code:'1001',name:'Cash / Bank',type:'Asset',category:'Current Asset',balance:2450},
-    {code:'1003',name:'Petty Cash',type:'Asset',category:'Current Asset',balance:200},
-    {code:'1100',name:'Accounts Receivable',type:'Asset',category:'Current Asset',balance:390},
-    {code:'1500',name:'Inventory / Supplies',type:'Asset',category:'Current Asset',balance:750},
-    {code:'1700',name:'Salon Equipment',type:'Asset',category:'Fixed Asset',balance:3500},
-    {code:'1701',name:'Accum. Depreciation - Equipment',type:'Asset',category:'Fixed Asset',balance:-350},
-    {code:'2001',name:'Accounts Payable',type:'Liability',category:'Current Liability',balance:380},
-    {code:'2010',name:'Sales Tax Payable',type:'Liability',category:'Current Liability',balance:120},
-    {code:'2020',name:'Salaries Payable',type:'Liability',category:'Current Liability',balance:0},
-    {code:'2030',name:'Tips Payable to Staff',type:'Liability',category:'Current Liability',balance:0},
-    {code:'3001',name:"Owner's Capital",type:'Equity',category:"Owner's Equity",balance:5000},
-    {code:'3100',name:'Retained Earnings',type:'Equity',category:"Owner's Equity",balance:1800},
-    {code:'4001',name:'Service Revenue - Hair',type:'Revenue',category:'Operating Revenue',balance:1450},
-    {code:'4002',name:'Service Revenue - Makeup',type:'Revenue',category:'Operating Revenue',balance:780},
-    {code:'4003',name:'Service Revenue - Nails',type:'Revenue',category:'Operating Revenue',balance:320},
-    {code:'4004',name:'Bridal Package Revenue',type:'Revenue',category:'Operating Revenue',balance:290},
-    {code:'4005',name:'Product Sales Revenue',type:'Revenue',category:'Operating Revenue',balance:0},
-    {code:'5001',name:'Rent Expense',type:'Expense',category:'Operating',balance:800},
-    {code:'5002',name:'Electricity',type:'Expense',category:'Operating',balance:75},
-    {code:'5003',name:'Water',type:'Expense',category:'Operating',balance:0},
-    {code:'5004',name:'Internet & Phone',type:'Expense',category:'Operating',balance:25},
-    {code:'5010',name:'Staff Salaries',type:'Expense',category:'Payroll',balance:700},
-    {code:'5020',name:'Marketing & Advertising',type:'Expense',category:'Operating',balance:50},
-    {code:'5021',name:'Cleaning Supplies',type:'Expense',category:'Operating',balance:30},
-    {code:'5022',name:'Equipment Maintenance',type:'Expense',category:'Operating',balance:0},
-    {code:'5030',name:'Cost of Products Sold',type:'Expense',category:'COGS',balance:0},
-    {code:'5050',name:'Staff Tips / Gratuities',type:'Expense',category:'Payroll',balance:312},
-    {code:'5099',name:'Miscellaneous Expenses',type:'Expense',category:'Operating',balance:20},
-  ],
-  invoices: [
-    {no:'INV-001',date:'2025-06-15',client:'Sara Ahmed',service:'Hair Color',amount:45,tax:7.2,disc:0,total:52.2,payment:'Cash',staff:'Nour',notes:'',status:'Paid'},
-    {no:'INV-002',date:'2025-06-15',client:'Maya Hassan',service:'Bridal Package',amount:120,tax:19.2,disc:0,total:139.2,payment:'Credit Card',staff:'Lina',notes:'Wedding June 20',status:'Paid'},
-    {no:'INV-003',date:'2025-06-18',client:'Layla Karim',service:'Facial',amount:55,tax:8.8,disc:5,total:58.8,payment:'Bank Transfer',staff:'Nour',notes:'Loyalty discount applied',status:'Pending'},
-  ],
-  staff: [
-    {name:'Nour',role:'Senior Stylist',tips:38,salary:350,color:'#C9A84C',avatar:'N'},
-    {name:'Lina',role:'Makeup Artist',tips:82,salary:350,color:'#7F77DD',avatar:'L'},
-    {name:'Dina',role:'Stylist',tips:25,salary:300,color:'#1D9E75',avatar:'D'},
-    {name:'Sara',role:'Nail Technician',tips:15,salary:280,color:'#D4537E',avatar:'S'},
-  ],
-  tips: [
-    {date:'2025-06-15',staff:'Nour',client:'Sara Ahmed',service:'Hair Color',tip:5},
-    {date:'2025-06-15',staff:'Lina',client:'Maya Hassan',service:'Bridal Package',tip:20},
-    {date:'2025-06-15',staff:'Dina',client:'Reem Ali',service:'Makeup',tip:3},
-    {date:'2025-06-17',staff:'Sara',client:'Hana Omar',service:'Nail Service',tip:2},
-    {date:'2025-06-19',staff:'Lina',client:'Dina Yousef',service:'Haircut',tip:2},
-    {date:'2025-06-18',staff:'Nour',client:'Layla Karim',service:'Facial',tip:0},
-  ],
-  inventory: [
-    {item:"L'Oreal Hair Color",category:'Color & Dye',stock:8,min:3,unitCost:8.5},
-    {item:'Wella Shampoo 1L',category:'Hair Products',stock:4,min:2,unitCost:12},
-    {item:'Foundation Palette',category:'Makeup Products',stock:2,min:1,unitCost:25},
-    {item:'Disposable Towels',category:'Cleaning Supplies',stock:1,min:5,unitCost:15},
-    {item:'OPI Nail Polish Set',category:'Nail Products',stock:12,min:4,unitCost:6},
-    {item:'Face Cream SPF50',category:'Skin Care',stock:5,min:2,unitCost:18},
-    {item:'Disposable Gloves (box)',category:'Consumables',stock:3,min:5,unitCost:4.5},
-  ],
-  budgets: [
-    {category:'Rent',budget:800,actual:800},
-    {category:'Staff Salaries & Tips',budget:1400,actual:1012},
-    {category:'Marketing',budget:100,actual:50},
-    {category:'Supplies & Purchases',budget:500,actual:380},
-    {category:'Utilities',budget:150,actual:100},
-    {category:'Other Expenses',budget:200,actual:50},
-  ],
-  invCounter: 4,
+// ═══════════════════════════════════════════════
+// DATABASE STRUCTURE & INITIAL CORE STATE
+// ═══════════════════════════════════════════════
+let accounts = [
+  { code: "1101", name: "الصندوق ونقدية المبيعات", type: "Asset", category: "Current Asset", balance: 0 },
+  { code: "1201", name: "أصول ومعدات صالون التجميل", type: "Asset", category: "Fixed Asset", balance: 0 },
+  { code: "2101", name: "رأس المال المفتتح", type: "Equity", category: "Equity", balance: 0 },
+  { code: "3101", name: "إيرادات المبيعات والخدمات", type: "Revenue", category: "Revenue", balance: 0 },
+  { code: "4101", name: "مصاريف عامة ومرافق تشغيلية", type: "Expense", category: "Expense", balance: 0 },
+  { code: "4102", name: "مصاريف إكراميات الكادر", type: "Expense", category: "Expense", balance: 0 }
+];
+
+let costCenters = [
+  { code: "CC-01", name: "قسم تصفيف الشعر الرئيسي", desc: "صالة العمليات الكبرى" },
+  { code: "CC-02", name: "قسم العناية والمكياج", desc: "المكياج والعرائس" },
+  { code: "CC-03", name: "قسم الإدارة والعموميات", desc: "المصاريف الإدارية" }
+];
+
+let employees = [
+  { id: "EMP-01", name: "رائد العبدالله", job: "خبير تصفيف شعر", baseTips: 0 },
+  { id: "EMP-02", name: "ميرا الحسين", job: "أخصائية تجميل ومكياج", baseTips: 0 }
+];
+
+let systemUsers = [
+  { username: "admin", pass: "1234" }
+];
+
+let systemConfig = {
+  showBackupSection: true,
+  showSampleDataBtn: true
 };
 
-const pages = {dashboard:'Dashboard',journal:'Daily Journal',invoices:'Invoices & Quotes',expenses:'Expenses Register',purchases:'Purchases & Inventory Orders',ledger:'Journal Entries (Double-Entry)',accounts:'Chart of Accounts',staff:'Staff Management & Tips',inventory:'Inventory Tracking',reports:'Reports & Insights',budgets:'Budget Management',settings:'Settings'};
+let journal = [];
+let expenses = [];
+let tips = [];
+let ledger = [];
 
-function showPage(id, el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  document.getElementById('page-title').textContent = pages[id]||id;
+// ═══════════════════════════════════════════════
+// AUTHENTICATION & LOGIN/LOGOUT
+// ═══════════════════════════════════════════════
+function doLogin() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value.trim();
+  
+  let found = systemUsers.find(user => user.username === u && user.pass === p);
+  if (found) {
+    document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
+    document.getElementById('main-app').style.setProperty('display', 'flex', 'important');
+    sessionStorage.setItem('glamour_session_active', u);
+    recalculateBalances();
+    applySecurityConfigUI();
+    showPage('dashboard', null);
+  } else {
+    alert('⚠️ اسم المستخدم أو كلمة المرور غير صحيحة!');
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('glamour_session_active');
+  location.reload();
 }
 
-function jd(n){return(+n||0).toFixed(3)+' JD'}
-function jn(n){return(+n||0).toFixed(3)}
+// ═══════════════════════════════════════════════
+// CALCULATIONS ENGINE
+// ═══════════════════════════════════════════════
+function recalculateBalances() {
+  accounts.forEach(a => a.balance = 0);
+  employees.forEach(e => e.baseTips = 0);
 
-// JOURNAL
-let journalFilter='', journalService='';
-function renderJournal(){
-  let d = D.journal.filter(r=>{
-    const s=journalFilter.toLowerCase();
-    return(!s||(r.client+r.service+r.staff).toLowerCase().includes(s))&&
-      (!journalService||r.service===journalService);
+  let totalRev = 0, totalExp = 0, totalTips = 0;
+
+  journal.forEach(j => totalRev += Number(j.amount));
+  expenses.forEach(e => totalExp += Number(e.amount));
+  tips.forEach(t => {
+    totalTips += Number(t.amount);
+    let emp = employees.find(e => e.id === t.empId || e.name === t.empName);
+    if(emp) emp.baseTips += Number(t.amount);
   });
-  const total = d.reduce((s,r)=>s+(r.amount+r.tax),0);
-  document.getElementById('j-total').textContent = jd(total);
-  document.getElementById('j-tbody').innerHTML = d.map((r,i)=>`
+
+  let revAcc = accounts.find(a => a.code === "3101"); if(revAcc) revAcc.balance += totalRev;
+  let expAcc = accounts.find(a => a.code === "4101"); if(expAcc) expAcc.balance += totalExp;
+  let tipAcc = accounts.find(a => a.code === "4102"); if(tipAcc) tipAcc.balance += totalTips;
+
+  ledger.forEach(l => {
+    let dr = accounts.find(a => a.code === l.drCode);
+    let cr = accounts.find(a => a.code === l.crCode);
+    if(dr) dr.balance += Number(l.amount);
+    if(cr) cr.balance -= Number(l.amount);
+  });
+
+  let cashAcc = accounts.find(a => a.code === "1101");
+  if(cashAcc) cashAcc.balance += (totalRev - totalExp - totalTips);
+}
+
+// ═══════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ═══════════════════════════════════════════════
+function showPage(pageId, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const target = document.getElementById('page-' + pageId); if(target) target.classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  
+  document.getElementById('page-title').textContent = pageId === 'dashboard' ? 'لوحة التحكم القيادية' : target.querySelector('.section-title')?.textContent || 'الشاشة المالية';
+  
+  if(pageId === 'dashboard') renderDashboard();
+  if(pageId === 'sales') renderJournal();
+  if(pageId === 'expenses') renderExpenses();
+  if(pageId === 'tips') renderTips();
+  if(pageId === 'employees') renderEmployees();
+  if(pageId === 'accounts') renderAccountsTable();
+  if(pageId === 'costcenters') renderCostCentersTable();
+  if(pageId === 'ledger') renderLedger();
+  if(pageId === 'settings') renderSettingsPage();
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+// ═══════════════════════════════════════════════
+// CRUD EMPLOYEE (ADD, EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openAddEmployee() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إضافة موظف جديد بالكامل</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">كود الموظف</label><input class="form-input" id="emp-code" value="EMP-0${employees.length + 1}"></div>
+    <div class="form-group"><label class="form-label">اسم الموظف كاملاً</label><input class="form-input" id="emp-name" placeholder="مثال: سارة أحمد"></div>
+    <div class="form-group"><label class="form-label">المسمى الوظيفي</label><input class="form-input" id="emp-job" placeholder="خبير / أخصائي"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitEmployee()">حفظ بطاقة الموظف</button></div>`;
+}
+
+function submitEmployee() {
+  const code = document.getElementById('emp-code').value.trim(), name = document.getElementById('emp-name').value.trim(), job = document.getElementById('emp-job').value.trim();
+  if(!code || !name) { alert('الرجاء تعبئة البيانات الأساسية!'); return; }
+  employees.push({ id: code, name, job, baseTips: 0 });
+  saveToStorage(); closeModal(); renderEmployees();
+}
+
+function openEditEmployee(id) {
+  let emp = employees.find(e => e.id === id); if(!emp) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل بيانات بطاقة الموظف</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-emp-id" value="${emp.id}">
+    <div class="form-group"><label class="form-label">اسم الموظف</label><input class="form-input" id="edit-emp-name" value="${emp.name}"></div>
+    <div class="form-group"><label class="form-label">المسمى والصفة الوظيفية</label><input class="form-input" id="edit-emp-job" value="${emp.job}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedEmployee()">تعديل وحفظ التحديثات</button></div>`;
+}
+
+function saveEditedEmployee() {
+  const id = document.getElementById('edit-emp-id').value;
+  let emp = employees.find(e => e.id === id);
+  if(emp) {
+    emp.name = document.getElementById('edit-emp-name').value.trim();
+    emp.job = document.getElementById('edit-emp-job').value.trim();
+    saveToStorage(); recalculateBalances(); closeModal(); renderEmployees();
+  }
+}
+
+function deleteEmployee(id) {
+  if(confirm('⚠️ هل أنت متأكد من حذف بطاقة هذا الموظف نهائياً من سجلات الصالون؟')) {
+    employees = employees.filter(e => e.id !== id);
+    saveToStorage(); recalculateBalances(); renderEmployees();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SETTINGS LAB & USER CONTROL ENGINE
+// ═══════════════════════════════════════════════
+function renderSettingsPage() {
+  document.getElementById('cfg-show-backup').checked = systemConfig.showBackupSection;
+  document.getElementById('cfg-show-sample').checked = systemConfig.showSampleDataBtn;
+  
+  let tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = systemUsers.map(u => `
     <tr>
-      <td style="color:#999;font-size:11px">${i+1}</td>
-      <td>${r.date}</td>
-      <td style="font-size:11px;color:#999">${r.receipt}</td>
-      <td><strong>${r.client}</strong></td>
-      <td>${r.service}</td>
-      <td>${r.staff}</td>
-      <td><span class="badge badge-gray">${r.payment}</span></td>
-      <td><strong>${jn(r.amount)}</strong></td>
-      <td style="color:#888">${jn(r.tax)}</td>
-      <td style="color:#C9A84C;font-weight:600">${r.tips>0?jn(r.tips):'—'}</td>
-      <td><strong class="green">${jn(r.amount+r.tax)}</strong></td>
-      <td><span class="badge ${r.status==='Paid'?'badge-green':'badge-amber'}">${r.status}</span></td>
-      <td><button class="btn btn-sm" title="View invoice" onclick="viewInvoiceForJournal(${i})"><i class="ti ti-eye"></i></button></td>
+      <td><strong>${u.username}</strong></td>
+      <td>${u.username === 'admin' ? '<span style="color:#aaa; font-size:11px">حساب أساسي</span>' : `<button class="btn btn-danger btn-sm" style="padding:2px 6px" onclick="deleteUser('${u.username}')">حذف</button>`}</td>
     </tr>`).join('');
 }
-function filterJournal(v){journalFilter=v;renderJournal()}
-function filterJournalService(v){journalService=v;renderJournal()}
-function openAddJournal(){
-  document.getElementById('j-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('j-modal').classList.add('open');
-}
-function saveJournal(){
-  const d=document.getElementById('j-date').value;
-  const c=document.getElementById('j-client').value.trim();
-  const a=parseFloat(document.getElementById('j-amount').value)||0;
-  const t=parseFloat(document.getElementById('j-tips').value)||0;
-  if(!c||!a){alert('Please fill client name and amount');return}
-  const tax=a*0.16;
-  const n=D.journal.length+1;
-  D.journal.push({
-    id:n,date:d,receipt:'REC-'+String(n).padStart(3,'0'),
-    client:c,service:document.getElementById('j-service').value,
-    staff:document.getElementById('j-staff').value||'—',
-    payment:document.getElementById('j-pay2').value,
-    amount:a,tax:parseFloat(tax.toFixed(3)),tips:t,status:'Paid'
-  });
-  closeModal('j-modal');renderJournal();
-}
-function viewInvoiceForJournal(i){
-  const r=D.journal[i];
-  const inv={no:r.receipt,date:r.date,client:r.client,service:r.service,amount:r.amount,tax:r.tax,disc:0,total:r.amount+r.tax,payment:r.payment,staff:r.staff,notes:'',status:r.status};
-  previewInvoice(inv);
+
+function changeAdminPassword() {
+  const p = document.getElementById('sys-admin-pass').value.trim();
+  if(!p) { alert('الرجاء كتابة كلمة مرور صالحة!'); return; }
+  let admin = systemUsers.find(u => u.username === 'admin');
+  if(admin) {
+    admin.pass = p; saveToStorage(); alert('✓ تم تحديث كلمة مرور حساب المسؤول بنجاح.');
+    document.getElementById('sys-admin-pass').value = '';
+  }
 }
 
-// INVOICES
-function renderInvoices(){
-  document.getElementById('inv-tbody').innerHTML = D.invoices.map(r=>`
+function addNewUser() {
+  const u = document.getElementById('new-user-name').value.trim();
+  const p = document.getElementById('new-user-pass').value.trim();
+  if(!u || !p) { alert('يرجى ملء اسم المستخدم وكلمة المرور!'); return; }
+  if(systemUsers.find(user => user.username === u)) { alert('اسم المستخدم موجود مسبقاً!'); return; }
+  
+  systemUsers.push({ username: u, pass: p });
+  saveToStorage(); renderSettingsPage();
+  document.getElementById('new-user-name').value = ''; document.getElementById('new-user-pass').value = '';
+  alert('✓ تم إنشاء وزرع حساب المستخدم الجديد بنجاح.');
+}
+
+function deleteUser(username) {
+  if(confirm(`هل تريد بالتأكيد حذف مستخدم النظام [${username}]؟`)) {
+    systemUsers = systemUsers.filter(u => u.username !== username);
+    saveToStorage(); renderSettingsPage();
+  }
+}
+
+function toggleSecurityViews() {
+  systemConfig.showBackupSection = document.getElementById('cfg-show-backup').checked;
+  systemConfig.showSampleDataBtn = document.getElementById('cfg-show-sample').checked;
+  saveToStorage();
+  applySecurityConfigUI();
+}
+
+function applySecurityConfigUI() {
+  const section = document.getElementById('sidebar-backup-section');
+  const sampleBtn = document.getElementById('btn-side-sample');
+  
+  if(section) section.style.display = systemConfig.showBackupSection ? 'flex' : 'none';
+  if(sampleBtn) sampleBtn.style.display = systemConfig.showSampleDataBtn ? 'flex' : 'none';
+}
+
+// ═══════════════════════════════════════════════
+// STANDARD OPERATION WINDOWS (MODALS)
+// ═══════════════════════════════════════════════
+function openInvModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تسجيل فاتورة قيد مبيعات نقدية للزبائن</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">اسم العميل</label><input class="form-input" id="m-client" value="عميل نقدي سريع"></div>
+    <div class="form-group"><label class="form-label">الخدمة</label><input class="form-input" id="m-service" placeholder="مثال: تسريحة شعر، سشوار"></div>
+    <div class="form-group"><label class="form-label">المبلغ المطلوب (JD)</label><input class="form-input" type="number" id="m-amount" step="any"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitInvoice()">ترحيل وحفظ الفاتورة</button></div>`;
+}
+function submitInvoice() {
+  const c = document.getElementById('m-client').value, s = document.getElementById('m-service').value, a = Number(document.getElementById('m-amount').value || 0);
+  if(!s || a <= 0) { alert('الرجاء كتابة تفاصيل الخدمة والمبلغ!'); return; }
+  journal.push({ date: new Date().toISOString().split('T')[0], receipt: "INV-"+Date.now().toString().slice(-3), client: c, service: s, amount: a });
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('sales', null);
+}
+
+function openAddExpense() {
+  document.getElementById('modal-overlay').classList.add('open');
+  let ccOptions = costCenters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تسجيل قيد مصروف تشغيلي وإداري جديد</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">تصنيف وعنوان المصروف</label><input class="form-input" id="e-cat" placeholder="كهرباء، ماء، صيانة"></div>
+    <div class="form-group"><label class="form-label">البيان والشرح</label><input class="form-input" id="e-desc"></div>
+    <div class="form-group"><label class="form-label">ربط بمركز كلفة</label><select class="form-input" id="e-cc">${ccOptions}</select></div>
+    <div class="form-group"><label class="form-label">المبلغ المدفوع نقداً (JD)</label><input class="form-input" type="number" id="e-amount" step="any"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitExpense()">ترحيل وإثبات المصروف</button></div>`;
+}
+function submitExpense() {
+  const cat = document.getElementById('e-cat').value, desc = document.getElementById('e-desc').value, cc = document.getElementById('e-cc').value, amt = Number(document.getElementById('e-amount').value || 0);
+  if(!cat || amt <= 0) { alert('الرجاء كتابة التصنيف والمبلغ!'); return; }
+  expenses.push({ date: new Date().toISOString().split('T')[0], category: cat, desc, costCenter: cc, amount: amt });
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('expenses', null);
+}
+
+function openAddTip() {
+  document.getElementById('modal-overlay').classList.add('open');
+  let empOptions = employees.map(e => `<option value="${e.id}">${e.name} (${e.job})</option>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تسجيل وإثبات حركة إكرامية موظف (Tips)</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">اختر الموظف المستحق</label><select class="form-input" id="t-emp">${empOptions}</select></div>
+    <div class="form-group"><label class="form-label">البيان / تفاصيل حركة الإكرامية</label><input class="form-input" id="t-desc" value="إكرامية نقدية من زبون"></div>
+    <div class="form-group"><label class="form-label">مبلغ الإكرامية الصافي (JD)</label><input class="form-input" type="number" id="t-amount" step="any"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitTip()">ترحيل حركة الإكراميات</button></div>`;
+}
+function submitTip() {
+  const empId = document.getElementById('t-emp').value, desc = document.getElementById('t-desc').value, amt = Number(document.getElementById('t-amount').value || 0);
+  let emp = employees.find(e => e.id === empId);
+  if(!emp || amt <= 0) { alert('الرجاء التأكد من صحة البيانات!'); return; }
+  tips.push({ date: new Date().toISOString().split('T')[0], empId: emp.id, empName: emp.name, desc, amount: amt });
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('tips', null);
+}
+
+function openAddAccount() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">زرع وتثبيت حساب جديد بدليل الحسابات</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">رقم كود الحساب المقترح</label><input class="form-input" id="acc-code" placeholder="مثال: 1102"></div>
+    <div class="form-group"><label class="form-label">اسم الحساب المحاسبي</label><input class="form-input" id="acc-name"></div>
+    <div class="form-group"><label class="form-label">النوع الرئيسي</label>
+      <select class="form-input" id="acc-type">
+        <option value="Asset">أصول (Asset)</option>
+        <option value="Liability">خصوم (Liability)</option>
+        <option value="Equity">حقوق ملكية (Equity)</option>
+        <option value="Revenue">إيرادات (Revenue)</option>
+        <option value="Expense">مصروفات (Expense)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">التصنيف المالي</label><input class="form-input" id="acc-cat" value="Current"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitAccount()">زرع في الدليل</button></div>`;
+}
+function submitAccount() {
+  const code = document.getElementById('acc-code').value.trim(), name = document.getElementById('acc-name').value.trim(), type = document.getElementById('acc-type').value, cat = document.getElementById('acc-cat').value.trim();
+  if(!code || !name) { alert('يرجى كتابة الكود والاسم بشكل صحيح!'); return; }
+  accounts.push({ code, name, type, category: cat, balance: 0 });
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('accounts', null);
+}
+
+function openAddCostCenter() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إنشاء مركز كلفة إداري نظامي جديد</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">كود مركز الكلفة</label><input class="form-input" id="cc-code" value="CC-0${costCenters.length + 1}"></div>
+    <div class="form-group"><label class="form-label">اسم مركز الكلفة</label><input class="form-input" id="cc-name" placeholder="مثال: قسم الميك اب والعرائس"></div>
+    <div class="form-group"><label class="form-label">الوصف الإداري والتنظيمي</label><input class="form-input" id="cc-desc"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitCostCenter()">تثبيت مركز الكلفة</button></div>`;
+}
+function submitCostCenter() {
+  const code = document.getElementById('cc-code').value.trim(), name = document.getElementById('cc-name').value.trim(), desc = document.getElementById('cc-desc').value.trim();
+  if(!code || !name) { alert('الرجاء ملء حقول مركز الكلفة!'); return; }
+  costCenters.push({ code, name, desc });
+  saveToStorage(); closeModal(); showPage('costcenters', null);
+}
+
+function openAddLedger() {
+  document.getElementById('modal-overlay').classList.add('open');
+  let accOptions = accounts.map(a => `<option value="${a.code}">${a.name} (${a.code})</option>`).join('');
+  let ccOptions = costCenters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إنشاء قيد محاسبي يدوي مزدوج ومتوازن</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">من حساب (الطرف المدين Dr)</label><select class="form-input" id="l-dr">${accOptions}</select></div>
+    <div class="form-group"><label class="form-label">إلى حساب (الطرف الدائن Cr)</label><select class="form-input" id="l-cr">${accOptions}</select></div>
+    <div class="form-group"><label class="form-label">البيان والشرح للتوجيه</label><input class="form-input" id="l-desc"></div>
+    <div class="form-group"><label class="form-label">المبلغ بالدينار (JD)</label><input class="form-input" type="number" id="l-amt" step="any"></div>
+    <div class="form-group"><label class="form-label">ربط بمركز كلفة</label><select class="form-input" id="l-cc"><option value="بدون مركز كلفة">بدون مركز كلفة</option>${ccOptions}</select></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitLedger()">ترحيل وإثبات قيد اليومية</button></div>`;
+}
+function submitLedger() {
+  const dr = document.getElementById('l-dr').value, cr = document.getElementById('l-cr').value, desc = document.getElementById('l-desc').value, amt = Number(document.getElementById('l-amt').value || 0), cc = document.getElementById('l-cc').value;
+  if(dr === cr || amt <= 0) { alert('الرجاء التأكد من اختيار حسابين مختلفين ومبلغ مالي صحيح!'); return; }
+  ledger.push({ date: new Date().toISOString().split('T')[0], entryNo: "JV-"+Date.now().toString().slice(-3), drCode: dr, crCode: cr, desc, amount: amt, costCenter: cc });
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('ledger', null);
+}
+
+// ═══════════════════════════════════════════════
+// RENDERING TABLES FUNCTIONS
+// ═══════════════════════════════════════════════
+function renderDashboard() {
+  let rev = 0, exp = 0, tps = 0;
+  journal.forEach(j => rev += Number(j.amount));
+  expenses.forEach(e => exp += Number(e.amount));
+  tips.forEach(t => tps += Number(t.amount));
+  let cash = accounts.find(a=>a.code==="1101")?.balance || 0;
+
+  document.getElementById('dash-kpi-rev').textContent = rev.toFixed(3);
+  document.getElementById('dash-kpi-exp').textContent = exp.toFixed(3);
+  document.getElementById('dash-kpi-tips').textContent = tps.toFixed(3);
+  document.getElementById('dash-kpi-cash').textContent = cash.toFixed(3);
+}
+function renderJournal() {
+  document.getElementById('j-tbody').innerHTML = journal.map(j => `<tr><td>${j.date}</td><td><code>${j.receipt}</code></td><td><strong>${j.client}</strong></td><td>${j.service}</td><td class="green font-600">${Number(j.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد فواتير مبيعات مسجلة</td></tr>';
+}
+function renderExpenses() {
+  document.getElementById('exp-tbody').innerHTML = expenses.map(e => `<tr><td>${e.date}</td><td><span class="badge badge-purple">${e.category}</span></td><td>${e.desc}</td><td class="gold">${e.costCenter}</td><td class="red font-600">${Number(e.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">سجل المصاريف فارغ</td></tr>';
+}
+function renderTips() {
+  document.getElementById('tips-tbody').innerHTML = tips.map(t => `<tr><td>${t.date}</td><td><strong>${t.empName}</strong></td><td>${t.desc}</td><td class="purple font-600">${Number(t.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">لا يوجد إكراميات مسجلة حالياً</td></tr>';
+}
+function renderEmployees() {
+  document.getElementById('emp-tbody').innerHTML = employees.map(e => `
     <tr>
-      <td><strong class="purple">${r.no}</strong></td>
-      <td>${r.date}</td>
-      <td><strong>${r.client}</strong></td>
-      <td>${r.service}</td>
-      <td>${jn(r.amount)}</td>
-      <td style="color:#888">${jn(r.tax)}</td>
-      <td><strong class="green">${jn(r.total)}</strong></td>
-      <td><span class="badge ${r.status==='Paid'?'badge-green':'badge-amber'}">${r.status}</span></td>
-      <td style="display:flex;gap:4px">
-        <button class="btn btn-sm" onclick='previewInvoice(${JSON.stringify(r).replace(/'/g,"\\'")})'><i class="ti ti-eye"></i>View</button>
-        <button class="btn btn-sm" onclick='previewInvoice(${JSON.stringify(r).replace(/'/g,"\\'")})'><i class="ti ti-qrcode"></i>QR</button>
+      <td><code>${e.id}</code></td>
+      <td><strong>${e.name}</strong></td>
+      <td><span class="badge badge-purple">${e.job}</span></td>
+      <td class="green font-600">${Number(e.baseTips).toFixed(3)}</td>
+      <td>
+        <div class="flex-gap">
+          <button class="btn btn-sm btn-gold" onclick="openEditEmployee('${e.id}')"><i class="ti ti-edit"></i> تعديل</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteEmployee('${e.id}')"><i class="ti ti-trash"></i> حذف</button>
+        </div>
       </td>
-    </tr>`).join('');
+    </tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد موظفين مسجلين</td></tr>';
 }
-function openInvModal(){
-  document.getElementById('inv-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('inv-client').value='';
-  document.getElementById('inv-amount').value='';
-  document.getElementById('inv-notes').value='';
-  document.getElementById('inv-modal').classList.add('open');
+function renderAccountsTable() {
+  document.getElementById('acc-tbody').innerHTML = accounts.map(a => `<tr><td><code>${a.code}</code></td><td><strong>${a.name}</strong></td><td>${a.type}</td><td>${a.category}</td><td class="font-600 ${a.balance>=0?'green':'red'}">${Number(a.balance).toFixed(3)}</td></tr>`).join('');
 }
-function createInvoice(){
-  const client=document.getElementById('inv-client').value.trim();
-  const amount=parseFloat(document.getElementById('inv-amount').value)||0;
-  if(!client||!amount){alert('Please fill client name and amount');return}
-  const date=document.getElementById('inv-date').value;
-  const service=document.getElementById('inv-service').value;
-  const taxPct=parseFloat(document.getElementById('inv-tax').value)||0;
-  const disc=parseFloat(document.getElementById('inv-disc').value)||0;
-  const tax=parseFloat((amount*taxPct/100).toFixed(3));
-  const total=parseFloat((amount+tax-disc).toFixed(3));
-  const no='INV-'+String(D.invCounter++).padStart(3,'0');
-  const inv={no,date,client,service,amount,tax,disc,total,
-    payment:document.getElementById('inv-pay').value,
-    staff:document.getElementById('inv-staff').value||'—',
-    notes:document.getElementById('inv-notes').value,status:'Pending'};
-  D.invoices.push(inv);
-  closeModal('inv-modal');
-  renderInvoices();
-  previewInvoice(inv);
+function renderCostCentersTable() {
+  document.getElementById('cc-tbody').innerHTML = costCenters.map(c => `<tr><td><code>${c.code}</code></td><td><strong>${c.name}</strong></td><td>${c.desc}</td></tr>`).join('');
 }
-function previewInvoice(inv){
-  const qrData=`INV:${inv.no}|CLIENT:${inv.client}|TOTAL:${inv.total}JD|DATE:${inv.date}|STATUS:${inv.status}`;
-  document.getElementById('inv-preview').innerHTML=`
-    <div class="invoice">
-      <div class="inv-header">
-        <div>
-          <div class="inv-logo">✂ Glamour Studio</div>
-          <div style="font-size:11px;color:#666;margin-top:4px">Amman, Jordan<br>Tel: +962 79 000 0000<br>info@glamoursalon.jo</div>
-        </div>
-        <div style="text-align:right">
-          <div class="inv-no">${inv.no}</div>
-          <div style="font-size:11px;color:#666;margin-top:4px">Date: ${inv.date}</div>
-          <div style="margin-top:6px"><span style="background:${inv.status==='Paid'?'#eaf3de':'#faeeda'};color:${inv.status==='Paid'?'#3b6d11':'#854f0b'};padding:3px 10px;border-radius:6px;font-size:11px;font-weight:700">${inv.status}</span></div>
-        </div>
-      </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Billed To</div>
-        <div style="font-size:15px;font-weight:700;color:#1a1a2e">${inv.client}</div>
-        ${inv.staff&&inv.staff!=='—'?`<div style="font-size:11px;color:#888">Attended by: ${inv.staff}</div>`:''}
-      </div>
-      <table class="inv-table" style="width:100%;border-collapse:collapse;margin:12px 0">
-        <thead><tr><th style="background:#f5f0ff;padding:8px 10px;text-align:left;font-size:11px;color:#4B0082;border-bottom:2px solid #C9A84C">Description</th><th style="background:#f5f0ff;padding:8px 10px;text-align:right;font-size:11px;color:#4B0082;border-bottom:2px solid #C9A84C">Amount (JD)</th></tr></thead>
+function renderLedger() {
+  document.getElementById('led-tbody').innerHTML = ledger.map(l => `<tr><td>${l.date}</td><td><code>${l.entryNo}</code></td><td>${l.drCode}</td><td>${l.crCode}</td><td>${l.desc}</td><td class="green font-600">${Number(l.amount).toFixed(3)}</td><td class="gold">${l.costCenter}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">سجل القيود العامة فارغ</td></tr>';
+}
+
+// ═══════════════════════════════════════════════
+// FINANCIAL REPORT STATEMENTS
+// ═══════════════════════════════════════════════
+function generateIncomeStatement() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  let rev = 0; accounts.filter(a=>a.type==="Revenue").forEach(a=>rev+=a.balance);
+  let exp = 0; accounts.filter(a=>a.type==="Expense").forEach(a=>exp+=a.balance);
+  let net = rev - exp;
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #C9A84C; padding-bottom:4px">قائمة الأرباح والخسائر والدخل الختامية (Income Statement)</h3>
+      <table>
+        <thead><tr><th>بند الحساب المالي</th><th>القيمة الحالية (JD)</th></tr></thead>
         <tbody>
-          <tr><td style="padding:8px 10px;border-bottom:1px solid #f5f5f5">${inv.service}</td><td style="padding:8px 10px;text-align:right;border-bottom:1px solid #f5f5f5">${jn(inv.amount)}</td></tr>
-          ${inv.disc>0?`<tr><td style="padding:8px 10px;border-bottom:1px solid #f5f5f5;color:#e24b4a">Discount</td><td style="padding:8px 10px;text-align:right;border-bottom:1px solid #f5f5f5;color:#e24b4a">− ${jn(inv.disc)}</td></tr>`:''}
-          <tr><td style="padding:8px 10px;color:#888">Tax (${inv.amount>0?Math.round(inv.tax/inv.amount*100):0}%)</td><td style="padding:8px 10px;text-align:right;color:#888">${jn(inv.tax)}</td></tr>
+          <tr><td>إجمالي الإيرادات وعمليات المبيعات الفورية للخدمات</td><td class="green font-600">${rev.toFixed(3)}</td></tr>
+          <tr><td>يُخصم منها: المصاريف التشغيلية ومصاريف الإكراميات الموزعة</td><td class="red font-600">(${exp.toFixed(3)})</td></tr>
+          <tr class="report-total"><td>صافي الربح / الخسارة الدوري للمنشأة</td><td class="${net>=0?'green':'red'} font-600">${net.toFixed(3)}</td></tr>
         </tbody>
       </table>
-      <div class="inv-total-box"><div style="font-size:11px;opacity:.8;margin-bottom:3px">TOTAL AMOUNT DUE</div><div style="font-size:20px;font-weight:800">${jn(inv.total)} JD</div><div style="font-size:10px;opacity:.7;margin-top:3px">Payment: ${inv.payment}</div></div>
-      <div class="qr-wrap">
-        <div class="qr-placeholder" id="qr-${inv.no.replace(/[^a-z0-9]/gi,'')}">
-          <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-            <rect width="56" height="56" fill="white"/>
-            ${generateQR(qrData)}
-          </svg>
-        </div>
-        <div>
-          <div style="font-weight:700;color:#4B0082;font-size:12px">Scan to verify payment</div>
-          <div style="font-size:11px;color:#666;margin-top:2px">${inv.no} · ${inv.client}</div>
-          <div style="font-size:11px;color:#666">Total: ${jn(inv.total)} JD</div>
-          <div style="font-size:10px;color:#999;margin-top:3px;font-family:monospace;word-break:break-all">${qrData}</div>
-        </div>
-      </div>
-      ${inv.notes?`<div style="margin-top:12px;padding:10px;background:#f9f5ff;border-radius:8px;font-size:11px;color:#666"><strong>Notes:</strong> ${inv.notes}</div>`:''}
-      <div style="margin-top:16px;text-align:center;font-size:10px;color:#bbb;border-top:1px solid #f0f0f0;padding-top:10px">Thank you for choosing Glamour Studio · Amman, Jordan</div>
     </div>`;
-  document.getElementById('inv-preview-modal').classList.add('open');
 }
 
-function generateQR(data){
-  // Simple visual QR-like pattern based on hash of data
-  const hash = data.split('').reduce((h,c)=>((h<<5)-h)+c.charCodeAt(0)|0,0);
-  let cells='';
-  const size=7; const cellW=8;
-  for(let r=0;r<size;r++)for(let c=0;c<size;c++){
-    const v=Math.abs((hash*(r+1)*(c+1)*7+r*31+c*17))%3;
-    if(v===0)cells+=`<rect x="${c*cellW}" y="${r*cellW}" width="${cellW-1}" height="${cellW-1}" fill="#4B0082"/>`;
-  }
-  // Finder patterns
-  const fp=(x,y)=>`<rect x="${x}" y="${y}" width="21" height="21" fill="none" stroke="#4B0082" stroke-width="2"/><rect x="${x+6}" y="${y+6}" width="9" height="9" fill="#4B0082"/>`;
-  return fp(0,0)+fp(35,0)+fp(0,35)+cells;
-}
-
-// EXPENSES
-function renderExpenses(){
-  const total = D.expenses.reduce((s,r)=>s+r.amount,0);
-  document.getElementById('exp-total').textContent = jd(total);
-  document.getElementById('exp-tbody').innerHTML = D.expenses.map(r=>`
-    <tr>
-      <td>${r.date}</td>
-      <td><span class="badge badge-blue">${r.category}</span></td>
-      <td>${r.desc}</td>
-      <td>${r.vendor}</td>
-      <td><span class="badge badge-gray">${r.payment}</span></td>
-      <td><strong class="red">${jn(r.amount)}</strong></td>
-      <td style="font-size:11px;color:#999">${r.receipt}</td>
-    </tr>`).join('');
-}
-function openAddExpense(){
-  document.getElementById('e-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('e-modal').classList.add('open');
-}
-function saveExpense(){
-  const a=parseFloat(document.getElementById('e-amount').value)||0;
-  if(!a){alert('Please enter amount');return}
-  const n=D.expenses.length+1;
-  D.expenses.push({
-    date:document.getElementById('e-date').value,
-    category:document.getElementById('e-cat').value,
-    desc:document.getElementById('e-desc').value||'—',
-    vendor:document.getElementById('e-vendor').value||'—',
-    payment:document.getElementById('e-pay').value,
-    amount:a,
-    receipt:'EXP-'+String(n).padStart(3,'0')
-  });
-  closeModal('exp-modal');renderExpenses();
-}
-
-// PURCHASES
-function renderPurchases(){
-  document.getElementById('pur-tbody').innerHTML = D.purchases.map(r=>`
-    <tr>
-      <td><strong class="blue">${r.po}</strong></td>
-      <td>${r.date}</td>
-      <td>${r.supplier}</td>
-      <td>${r.item}</td>
-      <td><span class="badge badge-blue">${r.category}</span></td>
-      <td>${r.qty}</td>
-      <td>${jn(r.unitPrice)}</td>
-      <td><strong>${jn(r.qty*r.unitPrice)}</strong></td>
-      <td><span class="badge ${r.status==='Received'?'badge-green':'badge-amber'}">${r.status}</span></td>
-    </tr>`).join('');
-}
-function openAddPurchase(){alert('Purchase form coming — fill in PO details');}
-
-// LEDGER
-function renderLedger(){
-  let dr=0,cr=0;
-  document.getElementById('led-tbody').innerHTML = D.ledger.map(r=>{
-    dr+=r.dr;cr+=r.cr;
-    return`<tr>
-      <td>${r.date}</td>
-      <td><strong class="purple">${r.entry}</strong></td>
-      <td>${r.account}</td>
-      <td style="font-family:monospace;font-size:11px;color:#999">${r.code}</td>
-      <td style="color:#888;font-size:12px">${r.desc}</td>
-      <td style="color:#0d9e5e;font-weight:600">${r.dr>0?jn(r.dr):'—'}</td>
-      <td style="color:#e24b4a;font-weight:600">${r.cr>0?jn(r.cr):'—'}</td>
-      <td style="font-size:11px;color:#999">${r.ref}</td>
-    </tr>`;
-  }).join('');
-  document.getElementById('led-dr').textContent=jd(dr);
-  document.getElementById('led-cr').textContent=jd(cr);
-  const bal=dr-cr;
-  const be=document.getElementById('led-bal');
-  be.textContent=jd(Math.abs(bal));
-  be.className=Math.abs(bal)<0.01?'green':'red';
-}
-function openAddLedger(){alert('Double-entry form: specify account, debit, and credit amounts');}
-
-// ACCOUNTS
-let accFilter='all';
-function filterAccounts(type,el){
-  accFilter=type;
-  document.querySelectorAll('#acc-tabs .tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  renderAccounts();
-}
-function renderAccounts(){
-  const typeMap={Asset:'badge-blue',Liability:'badge-red',Equity:'badge-green',Revenue:'badge-amber',Expense:'badge-gray'};
-  const balMap={Asset:'blue',Liability:'red',Equity:'green',Revenue:'gold',Expense:'red'};
-  const data=accFilter==='all'?D.accounts:D.accounts.filter(a=>a.type===accFilter);
-  document.getElementById('acc-tbody').innerHTML = data.map(r=>`
-    <tr>
-      <td style="font-family:monospace;font-weight:700;color:#4B0082">${r.code}</td>
-      <td><strong>${r.name}</strong></td>
-      <td><span class="badge ${typeMap[r.type]||'badge-gray'}">${r.type}</span></td>
-      <td style="color:#888;font-size:12px">${r.category}</td>
-      <td>${r.type==='Asset'||r.type==='Expense'?'Debit':'Credit'}</td>
-      <td><strong class="${balMap[r.type]||''}">${jn(Math.abs(r.balance))}</strong></td>
-    </tr>`).join('');
-}
-
-// STAFF
-function renderStaff(){
-  const maxTips=Math.max(...D.staff.map(s=>s.tips),1);
-  document.getElementById('staff-overview').innerHTML=
-    '<div class="section-header"><div class="section-title">Staff Overview</div><button class="btn btn-gold btn-sm" onclick="openAddTip()"><i class="ti ti-plus"></i>Record Tip</button></div>'+
-    D.staff.map(s=>`
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-      <div class="avatar" style="background:${s.color}22;color:${s.color}">${s.avatar}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:2px">
-          <span>${s.name} <span style="font-weight:400;color:#888;font-size:11px">· ${s.role}</span></span>
-          <span style="color:#C9A84C;font-size:12px">${jn(s.tips)} JD tips</span>
-        </div>
-        <div style="font-size:11px;color:#888;margin-bottom:3px">Monthly salary: ${jn(s.salary)} JD</div>
-        <div class="progress"><div class="progress-fill" style="width:${Math.round(s.tips/maxTips*100)}%;background:${s.color}"></div></div>
-      </div>
-    </div>`).join('');
-
-  document.getElementById('tips-tbody').innerHTML = D.tips.filter(t=>t.tip>0).map(r=>`
-    <tr>
-      <td>${r.date}</td>
-      <td><strong>${r.staff}</strong></td>
-      <td>${r.client}</td>
-      <td style="color:#888;font-size:12px">${r.service}</td>
-      <td><strong class="gold">${jn(r.tip)}</strong></td>
-    </tr>`).join('');
-}
-function openAddTip(){
-  document.getElementById('t-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('t-modal').classList.add('open');
-}
-function saveTip(){
-  const a=parseFloat(document.getElementById('t-amount').value)||0;
-  if(!a){alert('Please enter tip amount');return}
-  const staff=document.getElementById('t-staff').value;
-  D.tips.push({date:document.getElementById('t-date').value,staff,client:document.getElementById('t-client').value||'Client',service:document.getElementById('t-service').value||'—',tip:a});
-  const sm=D.staff.find(s=>s.name===staff);if(sm)sm.tips+=a;
-  closeModal('tip-modal');renderStaff();
-}
-
-// INVENTORY
-function renderInventory(){
-  const low=D.inventory.filter(r=>r.stock<=r.min);
-  if(low.length>0){
-    document.getElementById('inv-alert').style.display='flex';
-    document.getElementById('inv-alert-msg').textContent=`Low stock alert: ${low.map(r=>r.item).join(', ')}`;
-  }
-  document.getElementById('inv-tbody2').innerHTML = D.inventory.map(r=>{
-    const pct=Math.min(100,Math.round(r.stock/Math.max(r.min*2,1)*100));
-    const s=r.stock<=r.min?'Low Stock':r.stock<=r.min*1.5?'Warning':'In Stock';
-    const sc=s==='In Stock'?'badge-green':s==='Warning'?'badge-amber':'badge-red';
-    return`<tr>
-      <td><strong>${r.item}</strong></td>
-      <td><span class="badge badge-blue">${r.category}</span></td>
-      <td style="font-weight:700;${r.stock<=r.min?'color:#e24b4a':''}">${r.stock}</td>
-      <td style="color:#888">${r.min}</td>
-      <td>${jn(r.unitCost)}</td>
-      <td><strong>${jn(r.stock*r.unitCost)}</strong></td>
-      <td><span class="badge ${sc}">${s}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-// BUDGETS
-function renderBudgets(){
-  document.getElementById('bud-tbody').innerHTML = D.budgets.map(r=>{
-    const pct=Math.round(r.actual/r.budget*100);
-    const rem=r.budget-r.actual;
-    const s=pct>=100?'Over Budget':pct>=80?'Near Limit':'On Track';
-    const sc=pct>=100?'badge-red':pct>=80?'badge-amber':'badge-green';
-    return`<tr>
-      <td><strong>${r.category}</strong></td>
-      <td>${jn(r.budget)}</td>
-      <td>${jn(r.actual)}</td>
-      <td style="font-weight:600;color:${rem>=0?'#0d9e5e':'#e24b4a'}">${rem>=0?'+':''}${jn(rem)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="flex:1;background:#eee;border-radius:3px;height:6px;overflow:hidden">
-            <div style="height:100%;width:${Math.min(pct,100)}%;background:${pct>=100?'#e24b4a':pct>=80?'#C9A84C':'#0d9e5e'};border-radius:3px"></div>
-          </div>
-          <span style="font-size:11px;color:#888;min-width:30px">${pct}%</span>
-        </div>
-      </td>
-      <td><span class="badge ${sc}">${s}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-// DASHBOARD
-function renderDashboard(){
-  const bars=[{l:'Hair',v:1450,c:'#C9A84C'},{l:'Makeup',v:780,c:'#7F77DD'},{l:'Nails',v:320,c:'#1D9E75'},{l:'Bridal',v:290,c:'#D4537E'}];
-  const mx=Math.max(...bars.map(b=>b.v));
-  document.getElementById('dash-chart').innerHTML=bars.map(b=>`
-    <div class="bar-group">
-      <div class="bar-val">${b.v}</div>
-      <div class="bar" style="height:${Math.round(b.v/mx*100)}px;background:${b.c}"></div>
-      <div class="bar-label">${b.l}</div>
-    </div>`).join('');
-  document.getElementById('dash-tx').innerHTML=D.journal.slice(-4).reverse().map(r=>`
-    <tr>
-      <td><strong>${r.client}</strong></td>
-      <td style="color:#888;font-size:12px">${r.service}</td>
-      <td><strong>${jn(r.amount)}</strong></td>
-      <td><span class="badge ${r.status==='Paid'?'badge-green':'badge-amber'}">${r.status}</span></td>
-    </tr>`).join('');
-  const mx2=Math.max(...D.staff.map(s=>s.tips),1);
-  document.getElementById('dash-staff').innerHTML=D.staff.map(s=>`
-    <div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-        <span style="display:flex;align-items:center;gap:6px">
-          <div class="avatar" style="width:24px;height:24px;font-size:10px;background:${s.color}22;color:${s.color}">${s.avatar}</div>
-          <strong>${s.name}</strong> <span style="color:#888">${s.role}</span>
-        </span>
-        <span style="color:#C9A84C;font-weight:600">${jn(s.tips)} JD</span>
-      </div>
-      <div class="progress"><div class="progress-fill" style="width:${Math.round(s.tips/mx2*100)}%;background:${s.color}"></div></div>
-    </div>`).join('');
-  const bycat=D.expenses.reduce((a,e)=>{a[e.category]=(a[e.category]||0)+e.amount;return a},{});
-  const total=D.expenses.reduce((s,e)=>s+e.amount,0);
-  const catc={'Rent':'#4B0082','Electricity':'#C9A84C','Marketing':'#1D9E75','Cleaning':'#D4537E','Internet':'#185fa5','Consumables':'#888'};
-  document.getElementById('dash-exp').innerHTML=Object.entries(bycat).map(([c,v])=>{
-    const pct=Math.round(v/total*100);
-    return`<div style="margin-bottom:10px">
-      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px">
-        <span>${c}</span><span style="font-weight:600;color:${catc[c]||'#888'}">${jn(v)} JD (${pct}%)</span>
-      </div>
-      <div class="progress"><div class="progress-fill" style="width:${pct}%;background:${catc[c]||'#888'}"></div></div>
+function generateBalanceSheet() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  let totalAssets = 0; accounts.filter(a=>a.type==="Asset").forEach(a=>totalAssets+=a.balance);
+  let totalLiab = 0; accounts.filter(a=>a.type==="Liability").forEach(a=>totalLiab+=a.balance);
+  let totalEquity = 0; accounts.filter(a=>a.type==="Equity").forEach(a=>totalEquity+=a.balance);
+  let rev = 0; accounts.filter(a=>a.type==="Revenue").forEach(a=>rev+=a.balance);
+  let exp = 0; accounts.filter(a=>a.type==="Expense").forEach(a=>exp+=a.balance);
+  let currentProfit = rev - exp;
+  let finalEquityAndLiabilities = totalLiab + totalEquity + currentProfit;
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #1a1a2e; padding-bottom:4px">قائمة المركز المالي والميزانية العمومية (Balance Sheet)</h3>
+      <table style="margin-bottom:15px">
+        <thead><tr><th colspan="2">الأصول والموجودات (Assets)</th></tr></thead>
+        <tbody>
+          ${accounts.filter(a=>a.type==="Asset").map(a=>`<tr><td>${a.name}</td><td class="green font-600">${a.balance.toFixed(3)}</td></tr>`).join('')}
+          <tr class="report-total"><td>إجمالي حجم الأصول</td><td class="green font-600">${totalAssets.toFixed(3)}</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th colspan="2">الالتزامات وحقوق الملكية (Liabilities & Equity)</th></tr></thead>
+        <tbody>
+          ${accounts.filter(a=>a.type==="Liability").map(a=>`<tr><td>${a.name}</td><td class="red font-600">${a.balance.toFixed(3)}</td></tr>`).join('')}
+          ${accounts.filter(a=>a.type==="Equity").map(a=>`<tr><td>${a.name}</td><td class="blue font-600">${a.balance.toFixed(3)}</td></tr>`).join('')}
+          <tr><td>الأرباح الدورية المرحلة للحقوق</td><td class="green font-600">${currentProfit.toFixed(3)}</td></tr>
+          <tr class="report-total"><td>إجمالي الالتزامات وحقوق الملاك</td><td class="purple font-600">${finalEquityAndLiabilities.toFixed(3)}</td></tr>
+        </tbody>
+      </table>
     </div>`;
-  }).join('');
 }
 
-// REPORTS
-function showReport(type){
-  const out=document.getElementById('report-output');
-  const titles={pl:'Profit & Loss Statement — June 2025',bs:'Balance Sheet — June 2025',cf:'Cash Flow Statement — June 2025',staff:'Staff Performance Report',inv:'Inventory Valuation Report',tax:'Tax Summary Report'};
-  document.getElementById('report-title').textContent=titles[type];
-  let html='';
-  if(type==='pl'){
-    const rev=2840,exp=1275,tips=312;
-    html=`<table><thead><tr><th>Account</th><th>Amount (JD)</th></tr></thead><tbody>
-      <tr><td colspan="2" style="background:#f5f0ff;font-weight:700;color:#4B0082;padding:8px 12px">REVENUE</td></tr>
-      <tr><td style="padding-left:24px">Service Revenue - Hair</td><td>1,450.000</td></tr>
-      <tr><td style="padding-left:24px">Service Revenue - Makeup</td><td>780.000</td></tr>
-      <tr><td style="padding-left:24px">Service Revenue - Nails</td><td>320.000</td></tr>
-      <tr><td style="padding-left:24px">Bridal Package Revenue</td><td>290.000</td></tr>
-      <tr style="background:#eaf3de"><td><strong>Total Revenue</strong></td><td><strong class="green">2,840.000</strong></td></tr>
-      <tr><td colspan="2" style="background:#fff5f5;font-weight:700;color:#a32d2d;padding:8px 12px">EXPENSES</td></tr>
-      <tr><td style="padding-left:24px">Rent Expense</td><td>800.000</td></tr>
-      <tr><td style="padding-left:24px">Utilities (Electricity + Internet)</td><td>100.000</td></tr>
-      <tr><td style="padding-left:24px">Marketing & Advertising</td><td>50.000</td></tr>
-      <tr><td style="padding-left:24px">Cleaning & Consumables</td><td>50.000</td></tr>
-      <tr><td style="padding-left:24px">Staff Tips / Gratuities</td><td>312.000</td></tr>
-      <tr><td style="padding-left:24px">Miscellaneous</td><td>20.000</td></tr>
-      <tr style="background:#fcebeb"><td><strong>Total Expenses</strong></td><td><strong class="red">1,332.000</strong></td></tr>
-      <tr style="background:#eaf3de;font-size:15px"><td><strong>NET PROFIT</strong></td><td><strong class="green">1,508.000 JD</strong></td></tr>
-    </tbody></table>`;
-  } else if(type==='bs'){
-    html=`<table><thead><tr><th>Account</th><th>Amount (JD)</th></tr></thead><tbody>
-      <tr><td colspan="2" style="background:#e6f1fb;font-weight:700;color:#185fa5;padding:8px 12px">ASSETS</td></tr>
-      <tr><td style="padding-left:24px">Cash / Bank</td><td>2,450.000</td></tr>
-      <tr><td style="padding-left:24px">Petty Cash</td><td>200.000</td></tr>
-      <tr><td style="padding-left:24px">Accounts Receivable</td><td>390.000</td></tr>
-      <tr><td style="padding-left:24px">Inventory / Supplies</td><td>750.000</td></tr>
-      <tr><td style="padding-left:24px">Salon Equipment (net)</td><td>3,150.000</td></tr>
-      <tr style="background:#eaf3de"><td><strong>Total Assets</strong></td><td><strong class="green">6,940.000</strong></td></tr>
-      <tr><td colspan="2" style="background:#fcebeb;font-weight:700;color:#a32d2d;padding:8px 12px">LIABILITIES</td></tr>
-      <tr><td style="padding-left:24px">Accounts Payable</td><td>380.000</td></tr>
-      <tr><td style="padding-left:24px">Sales Tax Payable</td><td>120.000</td></tr>
-      <tr style="background:#fcebeb"><td><strong>Total Liabilities</strong></td><td><strong class="red">500.000</strong></td></tr>
-      <tr><td colspan="2" style="background:#eaf3de;font-weight:700;color:#3b6d11;padding:8px 12px">EQUITY</td></tr>
-      <tr><td style="padding-left:24px">Owner's Capital</td><td>5,000.000</td></tr>
-      <tr><td style="padding-left:24px">Retained Earnings</td><td>1,440.000</td></tr>
-      <tr style="background:#eaf3de"><td><strong>Total Equity</strong></td><td><strong class="green">6,440.000</strong></td></tr>
-      <tr style="font-size:14px;background:#f0f0f5"><td><strong>Total Liabilities + Equity</strong></td><td><strong>6,940.000</strong></td></tr>
-    </tbody></table>`;
-  } else if(type==='staff'){
-    html=`<table><thead><tr><th>Staff</th><th>Role</th><th>Salary (JD)</th><th>Tips (JD)</th><th>Total (JD)</th></tr></thead><tbody>`+
-      D.staff.map(s=>`<tr><td><strong>${s.name}</strong></td><td>${s.role}</td><td>${jn(s.salary)}</td><td class="gold">${jn(s.tips)}</td><td><strong>${jn(s.salary+s.tips)}</strong></td></tr>`).join('')+
-      `<tr style="background:#faeeda"><td colspan="2"><strong>TOTALS</strong></td><td><strong>${jn(D.staff.reduce((a,s)=>a+s.salary,0))}</strong></td><td><strong class="gold">${jn(D.staff.reduce((a,s)=>a+s.tips,0))}</strong></td><td><strong>${jn(D.staff.reduce((a,s)=>a+s.salary+s.tips,0))}</strong></td></tr></tbody></table>`;
-  } else if(type==='inv'){
-    html=`<table><thead><tr><th>Item</th><th>Category</th><th>Stock</th><th>Unit Cost</th><th>Total Value</th><th>Status</th></tr></thead><tbody>`+
-      D.inventory.map(r=>{
-        const s=r.stock<=r.min?'badge-red':r.stock<=r.min*1.5?'badge-amber':'badge-green';
-        const st=r.stock<=r.min?'Low':'OK';
-        return`<tr><td>${r.item}</td><td>${r.category}</td><td>${r.stock}</td><td>${jn(r.unitCost)}</td><td><strong>${jn(r.stock*r.unitCost)}</strong></td><td><span class="badge ${s}">${st}</span></td></tr>`;
-      }).join('')+
-      `<tr style="background:#eaf3de"><td colspan="4"><strong>Total Inventory Value</strong></td><td><strong class="green">${jn(D.inventory.reduce((a,r)=>a+r.stock*r.unitCost,0))}</strong></td><td></td></tr></tbody></table>`;
-  } else if(type==='tax'){
-    const totalRev=2840,taxRate=0.16,taxCollected=parseFloat((totalRev*taxRate).toFixed(3));
-    html=`<table><thead><tr><th>Description</th><th>Amount (JD)</th></tr></thead><tbody>
-      <tr><td>Total Revenue</td><td>${jn(totalRev)}</td></tr>
-      <tr><td>Tax Rate</td><td>16%</td></tr>
-      <tr><td>Sales Tax Collected</td><td><strong class="red">${jn(taxCollected)}</strong></td></tr>
-      <tr><td>Tax Paid (expenses)</td><td>0.000</td></tr>
-      <tr style="background:#faeeda"><td><strong>Net Tax Payable</strong></td><td><strong class="red">${jn(taxCollected)}</strong></td></tr>
-    </tbody></table>`;
-  } else if(type==='cf'){
-    html=`<table><thead><tr><th>Activity</th><th>Amount (JD)</th></tr></thead><tbody>
-      <tr><td colspan="2" style="background:#eaf3de;font-weight:700;color:#3b6d11;padding:8px 12px">OPERATING ACTIVITIES</td></tr>
-      <tr><td style="padding-left:24px">Cash received from clients</td><td class="green">2,450.000</td></tr>
-      <tr><td style="padding-left:24px">Cash paid for expenses</td><td class="red">(1,275.000)</td></tr>
-      <tr style="background:#eaf3de"><td><strong>Net Operating Cash Flow</strong></td><td><strong class="green">1,175.000</strong></td></tr>
-      <tr><td colspan="2" style="background:#e6f1fb;font-weight:700;color:#185fa5;padding:8px 12px">INVESTING ACTIVITIES</td></tr>
-      <tr><td style="padding-left:24px">Equipment purchases</td><td>0.000</td></tr>
-      <tr style="background:#e6f1fb"><td><strong>Net Investing Cash Flow</strong></td><td>0.000</td></tr>
-      <tr style="font-size:14px;background:#f5f0ff"><td><strong>NET CASH POSITION</strong></td><td><strong class="purple">1,175.000</strong></td></tr>
-    </tbody></table>`;
+// ═══════════════════════════════════════════════
+// DATA RUNTIME PERSISTENCE
+// ═══════════════════════════════════════════════
+function loadSampleData() {
+  journal = [
+    { date: "2026-07-01", receipt: "INV-101", client: "هديل الفايز", service: "صبغات مع تسريحة كاملة زفاف", amount: 180.000 },
+    { date: "2026-07-02", receipt: "INV-102", client: "ياسمين عمرو", service: "جلسة العناية بالبشرة والمكياج", amount: 70.000 }
+  ];
+  expenses = [{ date: "2026-07-02", category: "إيجارات", desc: "دفع قسط الإيجار الشهري للموقع", costCenter: "قسم الإدارة والعموميات", amount: 60.000 }];
+  tips = [{ date: "2026-07-03", empId: "EMP-01", empName: "رائد العبدالله", desc: "إكرام متميز من عميل مبيعات الفرح", amount: 15.000 }];
+  ledger = [{ date: "2026-07-01", entryNo: "JV-701", drCode: "1201", crCode: "2101", desc: "إثبات رأسمال أصول ثابتة ومعدات صالون التجميل", amount: 2000.000, costCenter: "بدون مركز كلفة" }];
+  
+  saveToStorage(); recalculateBalances(); alert('✓ تم تحميل قاعدة البيانات التجريبية بنجاح.'); showPage('dashboard', null);
+}
+
+function resetAllData() {
+  if(confirm('⚠️ تنبيه أمني! أنت تقوم بحذف كافة السجلات المالية وتطهير النظام تماماً، هل تود الاستمرار؟')) {
+    localStorage.clear(); sessionStorage.clear(); location.reload();
   }
-  document.getElementById('report-content').innerHTML=html;
-  out.style.display='block';
-  out.scrollIntoView({behavior:'smooth'});
 }
 
-// MODAL
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')});
-});
-
-// INIT
-// renderAll() called from init() below
-
-// ═══════════════════════════════════════════════
-// TRANSLATIONS
-// ═══════════════════════════════════════════════
-const T = {
-  en: {
-    appSub: 'Accounting System · JD · 2025',
-    dashboard:'Dashboard', journal:'Daily Journal', invoices:'Invoices & Quotes',
-    expenses:'Expenses Register', purchases:'Purchases & Inventory Orders',
-    ledger:'Journal Entries (Double-Entry)', accounts:'Chart of Accounts',
-    staff:'Staff Management & Tips', inventory:'Inventory Tracking',
-    reports:'Reports & Insights', budgets:'Budget Management', settings:'Settings',
-    newInvoice:'New Invoice', print:'Print', export:'⬇ Export Backup', import:'⬆ Import Backup',
-    addEntry:'Add Entry', addExpense:'Add Expense', newPurchase:'New Purchase',
-    newEntry:'New Entry', addAccount:'Add Account', recordTip:'Record Tip',
-    addItem:'Add Item', setBudget:'Set Budget', saveSettings:'Save Settings',
-    date:'Date', client:'Client', service:'Service', staff2:'Staff', payment:'Payment',
-    amount:'Amount', tax:'Tax', tips:'Tips', total:'Total', status:'Status', actions:'Actions',
-    category:'Category', description:'Description', vendor:'Vendor / Payee', receipt:'Receipt #',
-    supplier:'Supplier', qty:'Qty', unitPrice:'Unit Price', poNo:'PO #',
-    entryNo:'Entry #', account:'Account', code:'Code', debit:'Debit (JD)', credit:'Credit (JD)',
-    ref:'Ref', role:'Role', salary:'Salary', name:'Name', stock:'In Stock',
-    minLevel:'Min Level', unitCost:'Unit Cost', totalValue:'Total Value',
-    budget:'Budget (JD)', actual:'Actual (JD)', remaining:'Remaining (JD)', pctUsed:'% Used',
-    paid:'Paid', pending:'Pending', received:'Received', overBudget:'Over Budget',
-    nearLimit:'Near Limit', onTrack:'On Track', lowStock:'Low Stock', warning:'Warning', inStock:'In Stock',
-    revenue:'Revenue', expenses2:'Expenses', netProfit:'Net Profit', staffTips:'Staff Tips',
-    purchases2:'Purchases', clients:'Clients Served',
-    revenueByService:'Revenue by Service Type', recentTx:'Recent Transactions',
-    staffPerf:'Staff Performance — Tips', expBreakdown:'Expense Breakdown',
-    totalExpenses:'Total Expenses', largestCat:'Largest Category', dailyAvg:'Daily Average',
-    totalInvoiced:'Total Invoiced', overdue:'Overdue',
-    doubleEntry:'Double-entry bookkeeping: every Debit must equal every Credit.',
-    totalDebits:'Total Debits', totalCredits:'Total Credits', balance:'Balance',
-    lowStockAlert:'Low stock alert',
-    availableReports:'Available Reports', viewReport:'View Report →',
-    pl:'P&L Statement', bs:'Balance Sheet', cf:'Cash Flow', staffRep:'Staff Report',
-    invRep:'Inventory Report', taxRep:'Tax Summary',
-    plFull:'Profit & Loss Statement — June 2025', bsFull:'Balance Sheet — June 2025',
-    cfFull:'Cash Flow Statement — June 2025', staffFull:'Staff Performance Report',
-    invFull:'Inventory Valuation Report', taxFull:'Tax Summary Report',
-    bizInfo:'Business Information', bizName:'Business Name', owner:'Owner Name',
-    address:'Address', phone:'Phone', email:'Email', currency:'Currency',
-    taxRate:'Tax Rate (%)', invPrefix:'Invoice Prefix', fiscalYear:'Fiscal Year Start',
-    invPreview:'Invoice Preview', billedTo:'Billed To', attendedBy:'Attended by',
-    totalDue:'TOTAL AMOUNT DUE', scanQR:'Scan to verify payment', thankyou:'Thank you for choosing Glamour Studio',
-    notes:'Notes', discount:'Discount', cancel:'Cancel', save:'Save', close:'Close',
-    printPDF:'Print / Save PDF', generate:'Generate Invoice', clientName:'Client Name *',
-    invDate:'Invoice Date *', serviceItem:'Service / Item', amountJD:'Amount (JD) *',
-    taxPct:'Tax Rate (%)', discJD:'Discount (JD)', payMethod:'Payment Method', staffMember:'Staff Member',
-    additionalNotes:'Additional notes...', fullName:'Full name',
-    searchPlaceholder:'Search client, service, staff...', allServices:'All Services',
-    hairColor:'Hair Color', haircut:'Haircut', makeup:'Makeup', bridal:'Bridal Package',
-    nails:'Nail Service', waxing:'Waxing', facial:'Facial', hairTreatment:'Hair Treatment', other:'Other',
-    cash:'Cash', creditCard:'Credit Card', debitCard:'Debit Card', bankTransfer:'Bank Transfer',
-    savedOn:'Auto-save: ON', viewAll:'View all',
-    staffOverview:'Staff Overview', tipsLog:'Tips & Gratuities Log',
-    monthlySalary:'Monthly salary', tipAmount:'Tip Amount (JD)',
-    clientNameF:'Client name', serviceProvided:'Service provided',
-    saveEntry:'Save Entry', saveExpense2:'Save Expense', saveTip:'Save Tip',
-    expDate:'Date', expCat:'Category', expDesc:'Description', expVendor:'Vendor / Payee',
-    expPay:'Payment Method', expAmount:'Amount (JD)', expReceipt:'Receipt #',
-    rent:'Rent', electricity:'Electricity', water:'Water', internet:'Internet & Phone',
-    staffSalary:'Staff Salary', marketing:'Marketing', equipment:'Equipment',
-    cleaning:'Cleaning', consumables:'Consumables', insurance:'Insurance',
-    maintenance:'Maintenance',
-    plRevenue:'REVENUE', plExpenses:'EXPENSES', plNetProfit:'NET PROFIT',
-    plTotalRev:'Total Revenue', plTotalExp:'Total Expenses',
-    bsAssets:'ASSETS', bsLiab:'LIABILITIES', bsEquity:'EQUITY',
-    cfOp:'OPERATING ACTIVITIES', cfInv:'INVESTING ACTIVITIES', cfNet:'NET CASH POSITION',
-    staffTotals:'TOTALS', invTotalVal:'Total Inventory Value',
-    taxTotalRev:'Total Revenue', taxTaxRate:'Tax Rate', taxCollected:'Sales Tax Collected',
-    taxPaid:'Tax Paid (expenses)', taxPayable:'Net Tax Payable',
-  },
-  ar: {
-    appSub: 'نظام محاسبة · دينار أردني · 2025',
-    dashboard:'لوحة التحكم', journal:'يومية المبيعات', invoices:'الفواتير والعروض',
-    expenses:'سجل المصاريف', purchases:'المشتريات وأوامر الشراء',
-    ledger:'القيود المحاسبية (قيد مزدوج)', accounts:'دليل الحسابات',
-    staff:'الموظفون والأكراميات', inventory:'تتبع المخزون',
-    reports:'التقارير والإحصاءات', budgets:'إدارة الميزانية', settings:'الإعدادات',
-    newInvoice:'فاتورة جديدة', print:'طباعة', export:'⬇ تصدير نسخة احتياطية', import:'⬆ استيراد نسخة',
-    addEntry:'إضافة قيد', addExpense:'إضافة مصروف', newPurchase:'شراء جديد',
-    newEntry:'قيد جديد', addAccount:'إضافة حساب', recordTip:'تسجيل أكرامية',
-    addItem:'إضافة صنف', setBudget:'تحديد ميزانية', saveSettings:'حفظ الإعدادات',
-    date:'التاريخ', client:'العميلة', service:'الخدمة', staff2:'الموظفة', payment:'طريقة الدفع',
-    amount:'المبلغ', tax:'الضريبة', tips:'الأكرامية', total:'الإجمالي', status:'الحالة', actions:'إجراءات',
-    category:'الفئة', description:'الوصف', vendor:'المورد / الجهة', receipt:'رقم الإيصال',
-    supplier:'المورد', qty:'الكمية', unitPrice:'سعر الوحدة', poNo:'رقم الأمر',
-    entryNo:'رقم القيد', account:'الحساب', code:'الكود', debit:'مدين (د.أ)', credit:'دائن (د.أ)',
-    ref:'مرجع', role:'الوظيفة', salary:'الراتب', name:'الاسم', stock:'المخزون',
-    minLevel:'الحد الأدنى', unitCost:'تكلفة الوحدة', totalValue:'القيمة الإجمالية',
-    budget:'الميزانية (د.أ)', actual:'الفعلي (د.أ)', remaining:'المتبقي (د.أ)', pctUsed:'% المستخدم',
-    paid:'مدفوع', pending:'معلق', received:'مستلم', overBudget:'تجاوز الميزانية',
-    nearLimit:'قريب من الحد', onTrack:'ضمن الميزانية', lowStock:'مخزون منخفض', warning:'تحذير', inStock:'متوفر',
-    revenue:'الإيرادات', expenses2:'المصاريف', netProfit:'صافي الربح', staffTips:'أكراميات الموظفين',
-    purchases2:'المشتريات', clients:'العميلات المخدومات',
-    revenueByService:'الإيرادات حسب نوع الخدمة', recentTx:'آخر المعاملات',
-    staffPerf:'أداء الموظفين — الأكراميات', expBreakdown:'تفصيل المصاريف',
-    totalExpenses:'إجمالي المصاريف', largestCat:'أكبر فئة مصاريف', dailyAvg:'متوسط يومي',
-    totalInvoiced:'إجمالي الفواتير', overdue:'متأخرة',
-    doubleEntry:'القيد المزدوج: كل مدين يجب أن يساوي دائناً مقابلاً.',
-    totalDebits:'إجمالي المدين', totalCredits:'إجمالي الدائن', balance:'الرصيد',
-    lowStockAlert:'تنبيه مخزون منخفض',
-    availableReports:'التقارير المتاحة', viewReport:'عرض التقرير ←',
-    pl:'قائمة الأرباح والخسائر', bs:'الميزانية العمومية', cf:'التدفق النقدي', staffRep:'تقرير الموظفين',
-    invRep:'تقرير المخزون', taxRep:'ملخص الضرائب',
-    plFull:'قائمة الأرباح والخسائر — يونيو 2025', bsFull:'الميزانية العمومية — يونيو 2025',
-    cfFull:'قائمة التدفق النقدي — يونيو 2025', staffFull:'تقرير أداء الموظفين',
-    invFull:'تقرير تقييم المخزون', taxFull:'ملخص الضرائب والرسوم',
-    bizInfo:'معلومات المنشأة', bizName:'اسم الصالون', owner:'اسم المالكة',
-    address:'العنوان', phone:'الهاتف', email:'البريد الإلكتروني', currency:'العملة',
-    taxRate:'نسبة الضريبة (%)', invPrefix:'بادئة الفاتورة', fiscalYear:'بداية السنة المالية',
-    invPreview:'معاينة الفاتورة', billedTo:'فاتورة إلى', attendedBy:'قدّمت الخدمة',
-    totalDue:'إجمالي المبلغ المستحق', scanQR:'امسح للتحقق من الدفع', thankyou:'شكراً لاختياركم صالون غلامور',
-    notes:'ملاحظات', discount:'خصم', cancel:'إلغاء', save:'حفظ', close:'إغلاق',
-    printPDF:'طباعة / حفظ PDF', generate:'إنشاء الفاتورة', clientName:'اسم العميلة *',
-    invDate:'تاريخ الفاتورة *', serviceItem:'الخدمة / البند', amountJD:'المبلغ (د.أ) *',
-    taxPct:'نسبة الضريبة (%)', discJD:'الخصم (د.أ)', payMethod:'طريقة الدفع', staffMember:'الموظفة',
-    additionalNotes:'ملاحظات إضافية...', fullName:'الاسم الكامل',
-    searchPlaceholder:'ابحث عن عميلة، خدمة، موظفة...', allServices:'كل الخدمات',
-    hairColor:'صبغة شعر', haircut:'قص شعر', makeup:'مكياج', bridal:'باقة عروس',
-    nails:'عناية بالأظافر', waxing:'إزالة شعر', facial:'عناية بالبشرة', hairTreatment:'علاج شعر', other:'أخرى',
-    cash:'نقد', creditCard:'بطاقة ائتمان', debitCard:'بطاقة سحب', bankTransfer:'تحويل بنكي',
-    savedOn:'الحفظ التلقائي: مفعّل', viewAll:'عرض الكل',
-    staffOverview:'نظرة عامة على الموظفين', tipsLog:'سجل الأكراميات',
-    monthlySalary:'الراتب الشهري', tipAmount:'مبلغ الأكرامية (د.أ)',
-    clientNameF:'اسم العميلة', serviceProvided:'الخدمة المقدمة',
-    saveEntry:'حفظ القيد', saveExpense2:'حفظ المصروف', saveTip:'حفظ الأكرامية',
-    expDate:'التاريخ', expCat:'الفئة', expDesc:'الوصف', expVendor:'المورد / الجهة',
-    expPay:'طريقة الدفع', expAmount:'المبلغ (د.أ)', expReceipt:'رقم الإيصال',
-    rent:'إيجار', electricity:'كهرباء', water:'مياه', internet:'إنترنت وهاتف',
-    staffSalary:'راتب موظف', marketing:'تسويق وإعلان', equipment:'معدات',
-    cleaning:'نظافة', consumables:'مستهلكات', insurance:'تأمين',
-    maintenance:'صيانة',
-    plRevenue:'الإيرادات', plExpenses:'المصاريف', plNetProfit:'صافي الربح',
-    plTotalRev:'إجمالي الإيرادات', plTotalExp:'إجمالي المصاريف',
-    bsAssets:'الأصول', bsLiab:'الالتزامات', bsEquity:'حقوق الملكية',
-    cfOp:'أنشطة التشغيل', cfInv:'أنشطة الاستثمار', cfNet:'صافي الوضع النقدي',
-    staffTotals:'الإجماليات', invTotalVal:'إجمالي قيمة المخزون',
-    taxTotalRev:'إجمالي الإيرادات', taxTaxRate:'نسبة الضريبة', taxCollected:'ضريبة المبيعات المحصّلة',
-    taxPaid:'الضريبة المدفوعة (مصاريف)', taxPayable:'صافي الضريبة المستحقة',
-  }
-};
-
-let lang = localStorage.getItem('salonLang') || 'en';
-
-function t(key){ return T[lang][key] || T['en'][key] || key; }
-
-function toggleLang(){
-  lang = lang === 'en' ? 'ar' : 'en';
-  localStorage.setItem('salonLang', lang);
-  document.body.classList.toggle('ar', lang === 'ar');
-  document.getElementById('lang-btn').textContent = lang === 'en' ? 'ع' : 'EN';
-  applyTranslations();
-  renderAll();
+function saveToStorage() {
+  localStorage.setItem('g_acc_v4', JSON.stringify(accounts));
+  localStorage.setItem('g_cc_v4', JSON.stringify(costCenters));
+  localStorage.setItem('g_emp_v4', JSON.stringify(employees));
+  localStorage.setItem('g_users_v4', JSON.stringify(systemUsers));
+  localStorage.setItem('g_config_v4', JSON.stringify(systemConfig));
+  localStorage.setItem('g_j_v4', JSON.stringify(journal));
+  localStorage.setItem('g_e_v4', JSON.stringify(expenses));
+  localStorage.setItem('g_t_v4', JSON.stringify(tips));
+  localStorage.setItem('g_l_v4', JSON.stringify(ledger));
 }
 
-function applyTranslations(){
-  // Topbar
-  const pt = document.getElementById('page-title');
-  if(pt){ const cur = Object.keys(pages).find(k=>pages[k]===pt.textContent); if(cur) pt.textContent = t(cur)||pt.textContent; }
-  document.querySelector('.salon-sub').textContent = 'صالون حلاقة ومكياج';
-  document.querySelector('.version').textContent = t('appSub');
-  // Backup bar saved label
-  document.getElementById('bbar-saved').textContent = t('savedOn');
-  // Nav items text
-  const navMap = ['dashboard','journal','invoices','expenses','purchases','ledger','accounts','staff','inventory','reports','budgets','settings'];
-  document.querySelectorAll('.nav-item').forEach((el,i)=>{
-    const key = navMap[i];
-    if(key){ const icon = el.querySelector('i'); const badge = el.querySelector('.nav-badge');
-      el.textContent = ''; if(icon) el.appendChild(icon); el.appendChild(document.createTextNode(t(key))); if(badge) el.appendChild(badge); }
-  });
+function loadFromStorage() {
+  if(localStorage.getItem('g_acc_v4')) accounts = JSON.parse(localStorage.getItem('g_acc_v4'));
+  if(localStorage.getItem('g_cc_v4')) costCenters = JSON.parse(localStorage.getItem('g_cc_v4'));
+  if(localStorage.getItem('g_emp_v4')) employees = JSON.parse(localStorage.getItem('g_emp_v4'));
+  if(localStorage.getItem('g_users_v4')) systemUsers = JSON.parse(localStorage.getItem('g_users_v4'));
+  if(localStorage.getItem('g_config_v4')) systemConfig = JSON.parse(localStorage.getItem('g_config_v4'));
+  if(localStorage.getItem('g_j_v4')) journal = JSON.parse(localStorage.getItem('g_j_v4'));
+  if(localStorage.getItem('g_e_v4')) expenses = JSON.parse(localStorage.getItem('g_e_v4'));
+  if(localStorage.getItem('g_t_v4')) tips = JSON.parse(localStorage.getItem('g_t_v4'));
+  if(localStorage.getItem('g_l_v4')) ledger = JSON.parse(localStorage.getItem('g_l_v4'));
 }
 
-// ═══════════════════════════════════════════════
-// LOCALSTORAGE PERSISTENCE
-// ═══════════════════════════════════════════════
-const STORAGE_KEY = 'glamourSalonData_v2';
-
-function saveToStorage(){
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      journal: D.journal, expenses: D.expenses, purchases: D.purchases,
-      ledger: D.ledger, invoices: D.invoices, tips: D.tips,
-      staff: D.staff, inventory: D.inventory, budgets: D.budgets,
-      invCounter: D.invCounter, savedAt: new Date().toISOString()
-    }));
-    document.getElementById('bbar-saved').textContent = (lang==='ar'?'✓ تم الحفظ: ':'✓ Saved: ') + new Date().toLocaleTimeString();
-  } catch(e){ console.warn('Storage full', e); }
-}
-
-function loadFromStorage(){
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(!raw) return false;
-    const saved = JSON.parse(raw);
-    ['journal','expenses','purchases','ledger','invoices','tips','staff','inventory','budgets'].forEach(k=>{
-      if(saved[k] && saved[k].length > 0) D[k] = saved[k];
-    });
-    if(saved.invCounter) D.invCounter = saved.invCounter;
-    return true;
-  } catch(e){ return false; }
-}
-
-// ═══════════════════════════════════════════════
-// EXPORT / IMPORT BACKUP
-// ═══════════════════════════════════════════════
-function exportData(){
-  const data = {
-    meta: { app:'Glamour Salon Accounting', version:'2.0', exportedAt: new Date().toISOString(), currency:'JD' },
-    journal: D.journal, expenses: D.expenses, purchases: D.purchases,
-    ledger: D.ledger, invoices: D.invoices, tips: D.tips,
-    staff: D.staff, inventory: D.inventory, budgets: D.budgets,
-    invCounter: D.invCounter
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'GlamourSalon_Backup_' + new Date().toISOString().split('T')[0] + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importData(event){
-  const file = event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const data = JSON.parse(e.target.result);
-      const confirmMsg = lang==='ar'
-        ? 'هل تريد استيراد البيانات؟ سيتم استبدال البيانات الحالية.'
-        : 'Import this backup? Current data will be replaced.';
-      if(!confirm(confirmMsg)) return;
-      ['journal','expenses','purchases','ledger','invoices','tips','staff','inventory','budgets'].forEach(k=>{
-        if(data[k]) D[k] = data[k];
-      });
-      if(data.invCounter) D.invCounter = data.invCounter;
-      saveToStorage();
-      renderAll();
-      alert(lang==='ar' ? '✓ تم الاستيراد بنجاح' : '✓ Import successful');
-    } catch(err){ alert(lang==='ar' ? 'خطأ في الملف' : 'Invalid backup file'); }
-  };
-  reader.readAsText(file);
-  event.target.value = '';
-}
-
-// ═══════════════════════════════════════════════
-// RENDER ALL
-// ═══════════════════════════════════════════════
-function renderAll(){
-  renderDashboard();
-  renderJournal();
-  renderInvoices();
-  renderExpenses();
-  renderPurchases();
-  renderLedger();
-  renderAccounts();
-  renderStaff();
-  renderInventory();
-  renderBudgets();
-}
-
-// ═══════════════════════════════════════════════
-// AUTO-SAVE: patch save calls into existing functions
-// ═══════════════════════════════════════════════
-const _origSaveJournal = saveJournal;
-saveJournal = function(){ _origSaveJournal(); saveToStorage(); };
-
-const _origSaveExpense = saveExpense;
-saveExpense = function(){ _origSaveExpense(); saveToStorage(); };
-
-const _origSaveTip = saveTip;
-saveTip = function(){ _origSaveTip(); saveToStorage(); };
-
-const _origCreateInvoice = createInvoice;
-createInvoice = function(){ _origCreateInvoice(); saveToStorage(); };
-
-// ═══════════════════════════════════════════════
-// INIT WITH LANG + STORAGE
-// ═══════════════════════════════════════════════
+// App Launcher
 (function init(){
-  loadFromStorage();
-  document.body.classList.toggle('ar', lang === 'ar');
-  document.getElementById('lang-btn').textContent = lang === 'en' ? 'ع' : 'EN';
-  if(lang === 'ar') applyTranslations();
-  renderAll();
+  loadFromStorage(); recalculateBalances();
+  if(sessionStorage.getItem('glamour_session_active')) {
+    document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
+    document.getElementById('main-app').style.setProperty('display', 'flex', 'important');
+    applySecurityConfigUI();
+    showPage('dashboard', null);
+  }
 })();
-
 </script>
 </body>
 </html>
