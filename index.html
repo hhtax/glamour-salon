@@ -118,6 +118,12 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
     <div class="nav-item" onclick="showPage('sales',this)"><i class="ti ti-notebook"></i><span>فواتير المبيعات اليومية</span></div>
     <div class="nav-item" onclick="showPage('expenses',this)"><i class="ti ti-credit-card"></i><span>تسجيل المصاريف</span></div>
     <div class="nav-item" onclick="showPage('tips',this)"><i class="ti ti-coin"></i><span>إكراميات الموظفين</span></div>
+    <div class="nav-item" onclick="showPage('purchases',this)"><i class="ti ti-shopping-cart"></i><span>فواتير المشتريات</span></div>
+
+    <div class="nav-section">العملاء والخدمات والمخزون</div>
+    <div class="nav-item" onclick="showPage('clients',this)"><i class="ti ti-address-book"></i><span>سجل العملاء</span></div>
+    <div class="nav-item" onclick="showPage('services',this)"><i class="ti ti-sparkles"></i><span>دليل الخدمات والأسعار</span></div>
+    <div class="nav-item" onclick="showPage('inventory',this)"><i class="ti ti-package"></i><span>المخزون والمستلزمات</span></div>
 
     <div class="nav-section">المدخلات والمحاسبة بالدليل</div>
     <div class="nav-item" onclick="showPage('employees',this)"><i class="ti ti-users"></i><span>إدارة الموظفين</span></div>
@@ -162,6 +168,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="kpi-card"><div class="kpi-label">المصاريف التشغيلية</div><div class="kpi-value red" id="dash-kpi-exp">0.000</div></div>
           <div class="kpi-card"><div class="kpi-label">إجمالي الإكراميات</div><div class="kpi-value purple" id="dash-kpi-tips">0.000</div></div>
           <div class="kpi-card"><div class="kpi-label">رصيد الصندوق النقدي</div><div class="kpi-value gold" id="dash-kpi-cash">0.000</div></div>
+          <div class="kpi-card"><div class="kpi-label">قيمة المخزون الحالي</div><div class="kpi-value blue" id="dash-kpi-inv">0.000</div></div>
         </div>
         <div class="card">
           <div class="section-title" style="margin-bottom:10px">أهلاً بك في نظام الإدارة الشامل</div>
@@ -175,7 +182,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">شاشة حركة فواتير ومبيعات الخدمات اليومية</div><button class="btn btn-gold" onclick="openInvModal()">+ فاتورة مبيعات</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>التاريخ</th><th>رقم الفاتورة</th><th>الزبون</th><th>الخدمة</th><th>المبلغ (JD)</th></tr></thead>
+              <thead><tr><th>التاريخ</th><th>رقم الفاتورة</th><th>الزبون</th><th>الخدمة</th><th>المبلغ (JD)</th><th>خيارات</th></tr></thead>
               <tbody id="j-tbody"></tbody>
             </table>
           </div>
@@ -188,7 +195,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">شاشة تسجيل المصاريف الإدارية والتشغيلية</div><button class="btn btn-gold" onclick="openAddExpense()">+ إضافة حركة مصروف</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>التاريخ</th><th>التصنيف</th><th>البيان والشرح</th><th>مركز الكلفة</th><th>المبلغ (JD)</th></tr></thead>
+              <thead><tr><th>التاريخ</th><th>التصنيف</th><th>البيان والشرح</th><th>مركز الكلفة</th><th>المبلغ (JD)</th><th>خيارات</th></tr></thead>
               <tbody id="exp-tbody"></tbody>
             </table>
           </div>
@@ -201,8 +208,60 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">شاشة تسجيل وإثبات إكراميات الموظفين (Tips)</div><button class="btn btn-gold" onclick="openAddTip()">+ تسجيل إكرامية جديدة</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>التاريخ</th><th>الموظف المستلم</th><th>البيان</th><th>المبلغ (JD)</th></tr></thead>
+              <thead><tr><th>التاريخ</th><th>الموظف المستلم</th><th>البيان</th><th>المبلغ (JD)</th><th>خيارات</th></tr></thead>
               <tbody id="tips-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PURCHASES -->
+      <div class="page" id="page-purchases">
+        <div class="card">
+          <div class="section-header"><div class="section-title">شاشة فواتير المشتريات والتوريد</div><button class="btn btn-gold" onclick="openAddPurchase()">+ فاتورة مشتريات</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>المورّد</th><th>الصنف</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي (JD)</th><th>خيارات</th></tr></thead>
+              <tbody id="pur-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div class="page" id="page-clients">
+        <div class="card">
+          <div class="section-header"><div class="section-title">سجل بيانات وتاريخ زيارات العملاء</div><button class="btn btn-gold" onclick="openAddClient()">+ إضافة عميل جديد</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>اسم العميل</th><th>الهاتف</th><th>ملاحظات</th><th>إجمالي المشتريات (JD)</th><th>خيارات</th></tr></thead>
+              <tbody id="cli-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICES -->
+      <div class="page" id="page-services">
+        <div class="card">
+          <div class="section-header"><div class="section-title">دليل الخدمات وأسعارها المعتمدة</div><button class="btn btn-gold" onclick="openAddService()">+ إضافة خدمة جديدة</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>اسم الخدمة</th><th>الفئة</th><th>السعر (JD)</th><th>المدة (دقيقة)</th><th>خيارات</th></tr></thead>
+              <tbody id="svc-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="page" id="page-inventory">
+        <div class="card">
+          <div class="section-header"><div class="section-title">شاشة المخزون والمستلزمات ومستوى إعادة الطلب</div><button class="btn btn-gold" onclick="openAddInventory()">+ إضافة صنف مخزون</button></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>اسم الصنف</th><th>الفئة</th><th>الكمية الحالية</th><th>الحد الأدنى</th><th>تكلفة الوحدة</th><th>الحالة</th><th>خيارات</th></tr></thead>
+              <tbody id="inv-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -227,7 +286,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">دليل وشجرة الحسابات المالية العامة</div><button class="btn btn-gold" onclick="openAddAccount()">+ زرع حساب بالشجرة</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>كود الحساب</th><th>اسم الحساب المحاسبي</th><th>النوع الرئيسي</th><th>التصنيف</th><th>الرصيد الحالي (JD)</th></tr></thead>
+              <thead><tr><th>كود الحساب</th><th>اسم الحساب المحاسبي</th><th>النوع الرئيسي</th><th>التصنيف</th><th>الرصيد الحالي (JD)</th><th>خيارات</th></tr></thead>
               <tbody id="acc-tbody"></tbody>
             </table>
           </div>
@@ -240,7 +299,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">هيكل وتوزيع مراكز الكلفة المعتمدة</div><button class="btn btn-gold" onclick="openAddCostCenter()">+ إضافة مركز كلفة</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>كود المركز</th><th>اسم مركز الكلفة</th><th>الوصف والنطاق الإداري</th></tr></thead>
+              <thead><tr><th>كود المركز</th><th>اسم مركز الكلفة</th><th>الوصف والنطاق الإداري</th><th>خيارات</th></tr></thead>
               <tbody id="cc-tbody"></tbody>
             </table>
           </div>
@@ -253,7 +312,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
           <div class="section-header"><div class="section-title">سجل القيود العامة المزدوجة المتوازنة</div><button class="btn btn-gold" onclick="openAddLedger()">+ إنشاء قيد يدوي</button></div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>التاريخ</th><th>رقم القيد</th><th>المدين (من)</th><th>الدائن (إلى)</th><th>البيان التفصيلي</th><th>المبلغ (JD)</th><th>مركز الكلفة</th></tr></thead>
+              <thead><tr><th>التاريخ</th><th>رقم القيد</th><th>المدين (من)</th><th>الدائن (إلى)</th><th>البيان التفصيلي</th><th>المبلغ (JD)</th><th>مركز الكلفة</th><th>خيارات</th></tr></thead>
               <tbody id="led-tbody"></tbody>
             </table>
           </div>
@@ -262,12 +321,21 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
 
       <!-- REPORTS -->
       <div class="page" id="page-reports">
-        <div class="card" style="display: flex; gap: 10px;">
-          <button class="btn btn-gold" onclick="generateIncomeStatement()">توليد قائمة الدخل (Profit & Loss)</button>
-          <button class="btn btn-gold" onclick="generateBalanceSheet()">توليد الميزانية العمومية (Balance Sheet)</button>
+        <div class="card" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center">
+          <button class="btn btn-gold" onclick="generateIncomeStatement()">قائمة الدخل (Profit & Loss)</button>
+          <button class="btn btn-gold" onclick="generateBalanceSheet()">الميزانية العمومية (Balance Sheet)</button>
+          <button class="btn btn-gold" onclick="generateTrialBalance()">ميزان المراجعة (Trial Balance)</button>
+          <button class="btn btn-gold" onclick="generateStaffCommissionReport()">تقرير إكراميات وعمولات الموظفين</button>
+          <button class="btn btn-gold" onclick="generateLowStockReport()">تقرير نواقص المخزون</button>
+        </div>
+        <div class="card" style="display:flex; gap:10px; align-items:center">
+          <label class="form-label" style="margin:0">تقرير شهري لشهر:</label>
+          <input type="month" class="form-input" id="report-month-picker" style="width:180px">
+          <button class="btn btn-gold" onclick="generateMonthlyReport()">توليد التقرير الشهري</button>
         </div>
         <div class="card" id="report-result-panel" style="display:none"></div>
       </div>
+
 
       <!-- SETTINGS & SECURITY (COMPLETELY REMODELD) -->
       <div class="page" id="page-settings">
@@ -320,6 +388,18 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
             </div>
           </div>
 
+          <!-- REAL DATA BACKUP -->
+          <div class="card">
+            <div class="section-title" style="margin-bottom:15px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">النسخ الاحتياطي واستعادة البيانات (ملف حقيقي)</div>
+            <p style="font-size:12px; color:#888; margin-bottom:12px">بيانات النظام محفوظة داخل هذا المتصفح فقط (localStorage) وقد تُفقد إذا تم مسح بيانات المتصفح أو تغيير الجهاز. نزّل نسخة احتياطية بصيغة JSON بشكل دوري واحتفظ بها في مكان آمن.</p>
+            <button class="btn btn-gold btn-sm" style="width:100%; justify-content:center; margin-bottom:10px" onclick="exportBackup()"><i class="ti ti-download"></i> تنزيل نسخة احتياطية كاملة (JSON)</button>
+            <div class="form-group">
+              <label class="form-label">استعادة نسخة احتياطية من ملف</label>
+              <input type="file" class="form-input" id="restore-file-input" accept="application/json">
+            </div>
+            <button class="btn btn-sm" style="width:100%; justify-content:center; border-color:#e0e0e8" onclick="importBackup()"><i class="ti ti-upload"></i> استيراد واستعادة من الملف</button>
+          </div>
+
         </div>
       </div>
 
@@ -339,6 +419,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
 let accounts = [
   { code: "1101", name: "الصندوق ونقدية المبيعات", type: "Asset", category: "Current Asset", balance: 0 },
   { code: "1201", name: "أصول ومعدات صالون التجميل", type: "Asset", category: "Fixed Asset", balance: 0 },
+  { code: "1301", name: "المخزون ومستلزمات التشغيل", type: "Asset", category: "Current Asset", balance: 0 },
   { code: "2101", name: "رأس المال المفتتح", type: "Equity", category: "Equity", balance: 0 },
   { code: "3101", name: "إيرادات المبيعات والخدمات", type: "Revenue", category: "Revenue", balance: 0 },
   { code: "4101", name: "مصاريف عامة ومرافق تشغيلية", type: "Expense", category: "Expense", balance: 0 },
@@ -355,6 +436,24 @@ let employees = [
   { id: "EMP-01", name: "رائد العبدالله", job: "خبير تصفيف شعر", baseTips: 0 },
   { id: "EMP-02", name: "ميرا الحسين", job: "أخصائية تجميل ومكياج", baseTips: 0 }
 ];
+
+let clients = [
+  { id: "CLI-01", name: "هديل الفايز", phone: "0791234567", notes: "" },
+  { id: "CLI-02", name: "ياسمين عمرو", phone: "0777654321", notes: "" }
+];
+
+let services = [
+  { id: "SVC-01", name: "قص وتصفيف شعر", category: "شعر", price: 25, duration: 45 },
+  { id: "SVC-02", name: "مكياج كامل", category: "مكياج", price: 40, duration: 60 },
+  { id: "SVC-03", name: "مانيكير", category: "أظافر", price: 15, duration: 30 }
+];
+
+let inventory = [
+  { id: "INV-01", name: "شامبو 1 لتر", category: "العناية بالشعر", curStock: 8, minStock: 5, unitCost: 6.5 },
+  { id: "INV-02", name: "كريم أساس مكياج", category: "مكياج", curStock: 4, minStock: 3, unitCost: 12 }
+];
+
+let purchases = [];
 
 let systemUsers = [
   { username: "admin", pass: "1234" }
@@ -401,10 +500,11 @@ function recalculateBalances() {
   accounts.forEach(a => a.balance = 0);
   employees.forEach(e => e.baseTips = 0);
 
-  let totalRev = 0, totalExp = 0, totalTips = 0;
+  let totalRev = 0, totalExp = 0, totalTips = 0, totalPurchases = 0;
 
   journal.forEach(j => totalRev += Number(j.amount));
   expenses.forEach(e => totalExp += Number(e.amount));
+  purchases.forEach(p => totalPurchases += Number(p.total));
   tips.forEach(t => {
     totalTips += Number(t.amount);
     let emp = employees.find(e => e.id === t.empId || e.name === t.empName);
@@ -414,6 +514,7 @@ function recalculateBalances() {
   let revAcc = accounts.find(a => a.code === "3101"); if(revAcc) revAcc.balance += totalRev;
   let expAcc = accounts.find(a => a.code === "4101"); if(expAcc) expAcc.balance += totalExp;
   let tipAcc = accounts.find(a => a.code === "4102"); if(tipAcc) tipAcc.balance += totalTips;
+  let invAcc = accounts.find(a => a.code === "1301"); if(invAcc) invAcc.balance += totalPurchases;
 
   ledger.forEach(l => {
     let dr = accounts.find(a => a.code === l.drCode);
@@ -423,7 +524,7 @@ function recalculateBalances() {
   });
 
   let cashAcc = accounts.find(a => a.code === "1101");
-  if(cashAcc) cashAcc.balance += (totalRev - totalExp - totalTips);
+  if(cashAcc) cashAcc.balance += (totalRev - totalExp - totalTips - totalPurchases);
 }
 
 // ═══════════════════════════════════════════════
@@ -441,10 +542,15 @@ function showPage(pageId, navEl) {
   if(pageId === 'sales') renderJournal();
   if(pageId === 'expenses') renderExpenses();
   if(pageId === 'tips') renderTips();
+  if(pageId === 'purchases') renderPurchasesTable();
+  if(pageId === 'clients') renderClientsTable();
+  if(pageId === 'services') renderServicesTable();
+  if(pageId === 'inventory') renderInventoryTable();
   if(pageId === 'employees') renderEmployees();
   if(pageId === 'accounts') renderAccountsTable();
   if(pageId === 'costcenters') renderCostCentersTable();
   if(pageId === 'ledger') renderLedger();
+  if(pageId === 'reports') { const mp = document.getElementById('report-month-picker'); if(mp && !mp.value) mp.value = new Date().toISOString().slice(0,7); }
   if(pageId === 'settings') renderSettingsPage();
 }
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
@@ -494,6 +600,386 @@ function deleteEmployee(id) {
   if(confirm('⚠️ هل أنت متأكد من حذف بطاقة هذا الموظف نهائياً من سجلات الصالون؟')) {
     employees = employees.filter(e => e.id !== id);
     saveToStorage(); recalculateBalances(); renderEmployees();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD SALES INVOICES (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditInvoice(idx) {
+  const j = journal[idx]; if(!j) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل فاتورة مبيعات</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-inv-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">اسم العميل</label><input class="form-input" id="edit-inv-client" value="${j.client}"></div>
+    <div class="form-group"><label class="form-label">الخدمة</label><input class="form-input" id="edit-inv-service" value="${j.service}"></div>
+    <div class="form-group"><label class="form-label">المبلغ (JD)</label><input class="form-input" type="number" step="any" id="edit-inv-amount" value="${j.amount}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedInvoice()">حفظ التعديلات</button></div>`;
+}
+function saveEditedInvoice() {
+  const idx = Number(document.getElementById('edit-inv-idx').value);
+  const client = document.getElementById('edit-inv-client').value.trim();
+  const service = document.getElementById('edit-inv-service').value.trim();
+  const amount = Number(document.getElementById('edit-inv-amount').value || 0);
+  if(!service || amount <= 0) { alert('الرجاء التأكد من صحة البيانات!'); return; }
+  journal[idx].client = client; journal[idx].service = service; journal[idx].amount = amount;
+  saveToStorage(); recalculateBalances(); closeModal(); renderJournal(); renderDashboard();
+}
+function deleteInvoice(idx) {
+  if(confirm('⚠️ هل تريد حذف هذه الفاتورة نهائياً؟')) {
+    journal.splice(idx,1); saveToStorage(); recalculateBalances(); renderJournal();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD EXPENSES (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditExpense(idx) {
+  const e = expenses[idx]; if(!e) return;
+  let ccOptions = costCenters.map(c => `<option value="${c.name}" ${c.name===e.costCenter?'selected':''}>${c.name}</option>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل قيد مصروف</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-exp-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">تصنيف المصروف</label><input class="form-input" id="edit-exp-cat" value="${e.category}"></div>
+    <div class="form-group"><label class="form-label">البيان</label><input class="form-input" id="edit-exp-desc" value="${e.desc}"></div>
+    <div class="form-group"><label class="form-label">مركز الكلفة</label><select class="form-input" id="edit-exp-cc">${ccOptions}</select></div>
+    <div class="form-group"><label class="form-label">المبلغ (JD)</label><input class="form-input" type="number" step="any" id="edit-exp-amount" value="${e.amount}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedExpense()">حفظ التعديلات</button></div>`;
+}
+function saveEditedExpense() {
+  const idx = Number(document.getElementById('edit-exp-idx').value);
+  const cat = document.getElementById('edit-exp-cat').value.trim();
+  const desc = document.getElementById('edit-exp-desc').value.trim();
+  const cc = document.getElementById('edit-exp-cc').value;
+  const amount = Number(document.getElementById('edit-exp-amount').value || 0);
+  if(!cat || amount <= 0) { alert('الرجاء التأكد من صحة البيانات!'); return; }
+  expenses[idx].category = cat; expenses[idx].desc = desc; expenses[idx].costCenter = cc; expenses[idx].amount = amount;
+  saveToStorage(); recalculateBalances(); closeModal(); renderExpenses(); renderDashboard();
+}
+function deleteExpense(idx) {
+  if(confirm('⚠️ هل تريد حذف هذا المصروف نهائياً؟')) {
+    expenses.splice(idx,1); saveToStorage(); recalculateBalances(); renderExpenses();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD TIPS (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditTip(idx) {
+  const t = tips[idx]; if(!t) return;
+  let empOptions = employees.map(e => `<option value="${e.id}" ${e.id===t.empId?'selected':''}>${e.name} (${e.job})</option>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل حركة إكرامية</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-tip-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">الموظف</label><select class="form-input" id="edit-tip-emp">${empOptions}</select></div>
+    <div class="form-group"><label class="form-label">البيان</label><input class="form-input" id="edit-tip-desc" value="${t.desc}"></div>
+    <div class="form-group"><label class="form-label">المبلغ (JD)</label><input class="form-input" type="number" step="any" id="edit-tip-amount" value="${t.amount}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedTip()">حفظ التعديلات</button></div>`;
+}
+function saveEditedTip() {
+  const idx = Number(document.getElementById('edit-tip-idx').value);
+  const empId = document.getElementById('edit-tip-emp').value;
+  const desc = document.getElementById('edit-tip-desc').value.trim();
+  const amount = Number(document.getElementById('edit-tip-amount').value || 0);
+  let emp = employees.find(e => e.id === empId);
+  if(!emp || amount <= 0) { alert('الرجاء التأكد من صحة البيانات!'); return; }
+  tips[idx].empId = emp.id; tips[idx].empName = emp.name; tips[idx].desc = desc; tips[idx].amount = amount;
+  saveToStorage(); recalculateBalances(); closeModal(); renderTips(); renderDashboard();
+}
+function deleteTip(idx) {
+  if(confirm('⚠️ هل تريد حذف هذه الإكرامية نهائياً؟')) {
+    tips.splice(idx,1); saveToStorage(); recalculateBalances(); renderTips();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD CHART OF ACCOUNTS (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditAccount(idx) {
+  const a = accounts[idx]; if(!a) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل حساب بالدليل</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-acc-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">كود الحساب</label><input class="form-input" id="edit-acc-code" value="${a.code}"></div>
+    <div class="form-group"><label class="form-label">اسم الحساب</label><input class="form-input" id="edit-acc-name" value="${a.name}"></div>
+    <div class="form-group"><label class="form-label">النوع الرئيسي</label>
+      <select class="form-input" id="edit-acc-type">
+        <option value="Asset" ${a.type==='Asset'?'selected':''}>أصول (Asset)</option>
+        <option value="Liability" ${a.type==='Liability'?'selected':''}>خصوم (Liability)</option>
+        <option value="Equity" ${a.type==='Equity'?'selected':''}>حقوق ملكية (Equity)</option>
+        <option value="Revenue" ${a.type==='Revenue'?'selected':''}>إيرادات (Revenue)</option>
+        <option value="Expense" ${a.type==='Expense'?'selected':''}>مصروفات (Expense)</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">التصنيف</label><input class="form-input" id="edit-acc-cat" value="${a.category}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedAccount()">حفظ التعديلات</button></div>`;
+}
+function saveEditedAccount() {
+  const idx = Number(document.getElementById('edit-acc-idx').value);
+  const code = document.getElementById('edit-acc-code').value.trim();
+  const name = document.getElementById('edit-acc-name').value.trim();
+  const type = document.getElementById('edit-acc-type').value;
+  const cat = document.getElementById('edit-acc-cat').value.trim();
+  if(!code || !name) { alert('يرجى كتابة الكود والاسم بشكل صحيح!'); return; }
+  accounts[idx].code = code; accounts[idx].name = name; accounts[idx].type = type; accounts[idx].category = cat;
+  saveToStorage(); recalculateBalances(); closeModal(); renderAccountsTable();
+}
+function deleteAccount(idx) {
+  if(['1101','3101','4101'].includes(accounts[idx].code)) { alert('لا يمكن حذف هذا الحساب لأنه أساسي في حسابات النظام (الصندوق/الإيرادات/المصاريف).'); return; }
+  if(confirm('⚠️ هل تريد حذف هذا الحساب نهائياً من الدليل؟')) {
+    accounts.splice(idx,1); saveToStorage(); recalculateBalances(); renderAccountsTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD COST CENTERS (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditCostCenter(idx) {
+  const c = costCenters[idx]; if(!c) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل مركز كلفة</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-cc-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">كود المركز</label><input class="form-input" id="edit-cc-code" value="${c.code}"></div>
+    <div class="form-group"><label class="form-label">اسم المركز</label><input class="form-input" id="edit-cc-name" value="${c.name}"></div>
+    <div class="form-group"><label class="form-label">الوصف</label><input class="form-input" id="edit-cc-desc" value="${c.desc||''}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedCostCenter()">حفظ التعديلات</button></div>`;
+}
+function saveEditedCostCenter() {
+  const idx = Number(document.getElementById('edit-cc-idx').value);
+  const code = document.getElementById('edit-cc-code').value.trim();
+  const name = document.getElementById('edit-cc-name').value.trim();
+  const desc = document.getElementById('edit-cc-desc').value.trim();
+  if(!code || !name) { alert('الرجاء ملء حقول مركز الكلفة!'); return; }
+  costCenters[idx].code = code; costCenters[idx].name = name; costCenters[idx].desc = desc;
+  saveToStorage(); closeModal(); renderCostCentersTable();
+}
+function deleteCostCenter(idx) {
+  if(confirm('⚠️ هل تريد حذف مركز الكلفة هذا نهائياً؟')) {
+    costCenters.splice(idx,1); saveToStorage(); renderCostCentersTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD GENERAL LEDGER (EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openEditLedger(idx) {
+  const l = ledger[idx]; if(!l) return;
+  let accOptions = accounts.map(a => `<option value="${a.code}">${a.name} (${a.code})</option>`).join('');
+  let ccOptions = costCenters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل قيد يومية</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-led-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">من حساب (مدين)</label><select class="form-input" id="edit-led-dr">${accOptions}</select></div>
+    <div class="form-group"><label class="form-label">إلى حساب (دائن)</label><select class="form-input" id="edit-led-cr">${accOptions}</select></div>
+    <div class="form-group"><label class="form-label">البيان</label><input class="form-input" id="edit-led-desc" value="${l.desc}"></div>
+    <div class="form-group"><label class="form-label">المبلغ (JD)</label><input class="form-input" type="number" step="any" id="edit-led-amt" value="${l.amount}"></div>
+    <div class="form-group"><label class="form-label">مركز الكلفة</label><select class="form-input" id="edit-led-cc"><option value="بدون مركز كلفة">بدون مركز كلفة</option>${ccOptions}</select></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedLedger()">حفظ التعديلات</button></div>`;
+  document.getElementById('edit-led-dr').value = l.drCode;
+  document.getElementById('edit-led-cr').value = l.crCode;
+  document.getElementById('edit-led-cc').value = l.costCenter;
+}
+function saveEditedLedger() {
+  const idx = Number(document.getElementById('edit-led-idx').value);
+  const dr = document.getElementById('edit-led-dr').value, cr = document.getElementById('edit-led-cr').value;
+  const desc = document.getElementById('edit-led-desc').value.trim();
+  const amt = Number(document.getElementById('edit-led-amt').value || 0);
+  const cc = document.getElementById('edit-led-cc').value;
+  if(dr === cr || amt <= 0) { alert('الرجاء التأكد من اختيار حسابين مختلفين ومبلغ صحيح!'); return; }
+  ledger[idx].drCode = dr; ledger[idx].crCode = cr; ledger[idx].desc = desc; ledger[idx].amount = amt; ledger[idx].costCenter = cc;
+  saveToStorage(); recalculateBalances(); closeModal(); renderLedger();
+}
+function deleteLedger(idx) {
+  if(confirm('⚠️ هل تريد حذف هذا القيد نهائياً؟')) {
+    ledger.splice(idx,1); saveToStorage(); recalculateBalances(); renderLedger();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD CLIENTS (ADD, EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openAddClient() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إضافة عميل جديد</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">كود العميل</label><input class="form-input" id="cli-code" value="CLI-0${clients.length + 1}"></div>
+    <div class="form-group"><label class="form-label">اسم العميل</label><input class="form-input" id="cli-name" placeholder="مثال: سارة أحمد"></div>
+    <div class="form-group"><label class="form-label">رقم الهاتف</label><input class="form-input" id="cli-phone" placeholder="07XXXXXXXX"></div>
+    <div class="form-group"><label class="form-label">ملاحظات</label><input class="form-input" id="cli-notes"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitClient()">حفظ العميل</button></div>`;
+}
+function submitClient() {
+  const id = document.getElementById('cli-code').value.trim(), name = document.getElementById('cli-name').value.trim();
+  const phone = document.getElementById('cli-phone').value.trim(), notes = document.getElementById('cli-notes').value.trim();
+  if(!id || !name) { alert('الرجاء تعبئة كود واسم العميل!'); return; }
+  clients.push({ id, name, phone, notes });
+  saveToStorage(); closeModal(); renderClientsTable();
+}
+function openEditClient(idx) {
+  const c = clients[idx]; if(!c) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل بيانات عميل</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-cli-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">اسم العميل</label><input class="form-input" id="edit-cli-name" value="${c.name}"></div>
+    <div class="form-group"><label class="form-label">رقم الهاتف</label><input class="form-input" id="edit-cli-phone" value="${c.phone||''}"></div>
+    <div class="form-group"><label class="form-label">ملاحظات</label><input class="form-input" id="edit-cli-notes" value="${c.notes||''}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedClient()">حفظ التعديلات</button></div>`;
+}
+function saveEditedClient() {
+  const idx = Number(document.getElementById('edit-cli-idx').value);
+  clients[idx].name = document.getElementById('edit-cli-name').value.trim();
+  clients[idx].phone = document.getElementById('edit-cli-phone').value.trim();
+  clients[idx].notes = document.getElementById('edit-cli-notes').value.trim();
+  saveToStorage(); closeModal(); renderClientsTable();
+}
+function deleteClient(idx) {
+  if(confirm('⚠️ هل تريد حذف هذا العميل نهائياً؟')) {
+    clients.splice(idx,1); saveToStorage(); renderClientsTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD SERVICES (ADD, EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openAddService() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إضافة خدمة جديدة</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">كود الخدمة</label><input class="form-input" id="svc-code" value="SVC-0${services.length + 1}"></div>
+    <div class="form-group"><label class="form-label">اسم الخدمة</label><input class="form-input" id="svc-name" placeholder="مثال: قص شعر"></div>
+    <div class="form-group"><label class="form-label">الفئة</label><input class="form-input" id="svc-cat" placeholder="شعر / مكياج / أظافر"></div>
+    <div class="form-group"><label class="form-label">السعر (JD)</label><input class="form-input" type="number" step="any" id="svc-price"></div>
+    <div class="form-group"><label class="form-label">المدة (دقيقة)</label><input class="form-input" type="number" id="svc-duration" value="30"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitService()">حفظ الخدمة</button></div>`;
+}
+function submitService() {
+  const id = document.getElementById('svc-code').value.trim(), name = document.getElementById('svc-name').value.trim();
+  const category = document.getElementById('svc-cat').value.trim(), price = Number(document.getElementById('svc-price').value || 0);
+  const duration = Number(document.getElementById('svc-duration').value || 0);
+  if(!id || !name || price <= 0) { alert('الرجاء تعبئة اسم الخدمة والسعر بشكل صحيح!'); return; }
+  services.push({ id, name, category, price, duration });
+  saveToStorage(); closeModal(); renderServicesTable();
+}
+function openEditService(idx) {
+  const s = services[idx]; if(!s) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل خدمة</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-svc-idx" value="${idx}">
+    <div class="form-group"><label class="form-label">اسم الخدمة</label><input class="form-input" id="edit-svc-name" value="${s.name}"></div>
+    <div class="form-group"><label class="form-label">الفئة</label><input class="form-input" id="edit-svc-cat" value="${s.category||''}"></div>
+    <div class="form-group"><label class="form-label">السعر (JD)</label><input class="form-input" type="number" step="any" id="edit-svc-price" value="${s.price}"></div>
+    <div class="form-group"><label class="form-label">المدة (دقيقة)</label><input class="form-input" type="number" id="edit-svc-duration" value="${s.duration||0}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedService()">حفظ التعديلات</button></div>`;
+}
+function saveEditedService() {
+  const idx = Number(document.getElementById('edit-svc-idx').value);
+  services[idx].name = document.getElementById('edit-svc-name').value.trim();
+  services[idx].category = document.getElementById('edit-svc-cat').value.trim();
+  services[idx].price = Number(document.getElementById('edit-svc-price').value || 0);
+  services[idx].duration = Number(document.getElementById('edit-svc-duration').value || 0);
+  saveToStorage(); closeModal(); renderServicesTable();
+}
+function deleteService(idx) {
+  if(confirm('⚠️ هل تريد حذف هذه الخدمة نهائياً؟')) {
+    services.splice(idx,1); saveToStorage(); renderServicesTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD INVENTORY (ADD, EDIT, DELETE)
+// ═══════════════════════════════════════════════
+function openAddInventory() {
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">إضافة صنف مخزون</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">كود الصنف</label><input class="form-input" id="inv-code" value="INV-0${inventory.length + 1}"></div>
+    <div class="form-group"><label class="form-label">اسم الصنف</label><input class="form-input" id="inv-name"></div>
+    <div class="form-group"><label class="form-label">الفئة</label><input class="form-input" id="inv-cat"></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">الكمية الحالية</label><input class="form-input" type="number" id="inv-cur" value="0"></div>
+      <div class="form-group"><label class="form-label">الحد الأدنى</label><input class="form-input" type="number" id="inv-min" value="1"></div>
+    </div>
+    <div class="form-group"><label class="form-label">تكلفة الوحدة (JD)</label><input class="form-input" type="number" step="any" id="inv-cost" value="0"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitInventory()">حفظ الصنف</button></div>`;
+}
+function submitInventory() {
+  const id = document.getElementById('inv-code').value.trim(), name = document.getElementById('inv-name').value.trim();
+  const category = document.getElementById('inv-cat').value.trim();
+  const curStock = Number(document.getElementById('inv-cur').value || 0), minStock = Number(document.getElementById('inv-min').value || 0);
+  const unitCost = Number(document.getElementById('inv-cost').value || 0);
+  if(!id || !name) { alert('الرجاء تعبئة كود واسم الصنف!'); return; }
+  inventory.push({ id, name, category, curStock, minStock, unitCost });
+  saveToStorage(); closeModal(); renderInventoryTable();
+}
+function openEditInventory(idx) {
+  const i = inventory[idx]; if(!i) return;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تعديل صنف مخزون</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <input type="hidden" id="edit-inv-idx2" value="${idx}">
+    <div class="form-group"><label class="form-label">اسم الصنف</label><input class="form-input" id="edit-inv-name" value="${i.name}"></div>
+    <div class="form-group"><label class="form-label">الفئة</label><input class="form-input" id="edit-inv-cat" value="${i.category||''}"></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">الكمية الحالية</label><input class="form-input" type="number" id="edit-inv-cur" value="${i.curStock}"></div>
+      <div class="form-group"><label class="form-label">الحد الأدنى</label><input class="form-input" type="number" id="edit-inv-min" value="${i.minStock}"></div>
+    </div>
+    <div class="form-group"><label class="form-label">تكلفة الوحدة (JD)</label><input class="form-input" type="number" step="any" id="edit-inv-cost" value="${i.unitCost}"></div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="saveEditedInventory()">حفظ التعديلات</button></div>`;
+}
+function saveEditedInventory() {
+  const idx = Number(document.getElementById('edit-inv-idx2').value);
+  inventory[idx].name = document.getElementById('edit-inv-name').value.trim();
+  inventory[idx].category = document.getElementById('edit-inv-cat').value.trim();
+  inventory[idx].curStock = Number(document.getElementById('edit-inv-cur').value || 0);
+  inventory[idx].minStock = Number(document.getElementById('edit-inv-min').value || 0);
+  inventory[idx].unitCost = Number(document.getElementById('edit-inv-cost').value || 0);
+  saveToStorage(); closeModal(); renderInventoryTable();
+}
+function deleteInventory(idx) {
+  if(confirm('⚠️ هل تريد حذف هذا الصنف من المخزون نهائياً؟')) {
+    inventory.splice(idx,1); saveToStorage(); renderInventoryTable();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CRUD PURCHASES (ADD, DELETE) - يحدّث المخزون تلقائياً
+// ═══════════════════════════════════════════════
+function openAddPurchase() {
+  document.getElementById('modal-overlay').classList.add('open');
+  let itemOptions = inventory.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-header"><div class="modal-title">تسجيل فاتورة مشتريات جديدة</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
+    <div class="form-group"><label class="form-label">المورّد</label><input class="form-input" id="pur-supplier" placeholder="اسم الشركة الموردة"></div>
+    <div class="form-group"><label class="form-label">الصنف (من المخزون)</label><select class="form-input" id="pur-item">${itemOptions || '<option value="">-- لا يوجد أصناف مخزون بعد --</option>'}</select></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">الكمية</label><input class="form-input" type="number" id="pur-qty" value="1"></div>
+      <div class="form-group"><label class="form-label">سعر الوحدة (JD)</label><input class="form-input" type="number" step="any" id="pur-price"></div>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitPurchase()">ترحيل فاتورة المشتريات</button></div>`;
+}
+function submitPurchase() {
+  const supplier = document.getElementById('pur-supplier').value.trim();
+  const itemId = document.getElementById('pur-item').value;
+  const qty = Number(document.getElementById('pur-qty').value || 0);
+  const unitPrice = Number(document.getElementById('pur-price').value || 0);
+  const item = inventory.find(i => i.id === itemId);
+  if(!supplier || !item || qty <= 0 || unitPrice <= 0) { alert('الرجاء التأكد من تعبئة كل الحقول بشكل صحيح!'); return; }
+  const total = qty * unitPrice;
+  purchases.push({ date: new Date().toISOString().split('T')[0], supplier, itemId: item.id, itemName: item.name, qty, unitPrice, total });
+  item.curStock = Number(item.curStock) + qty;
+  saveToStorage(); recalculateBalances(); closeModal(); showPage('purchases', null);
+}
+function deletePurchase(idx) {
+  if(confirm('⚠️ حذف فاتورة المشتريات لن يخفض كمية المخزون التي أُضيفت سابقاً تلقائياً - هل تريد المتابعة؟')) {
+    purchases.splice(idx,1); saveToStorage(); recalculateBalances(); renderPurchasesTable();
   }
 }
 
@@ -561,15 +1047,25 @@ function applySecurityConfigUI() {
 // ═══════════════════════════════════════════════
 function openInvModal() {
   document.getElementById('modal-overlay').classList.add('open');
+  let cliOptions = clients.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+  let svcOptions = services.map(s => `<option value="${s.name}" data-price="${s.price}">${s.name} (${Number(s.price).toFixed(3)} JD)</option>`).join('');
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-header"><div class="modal-title">تسجيل فاتورة قيد مبيعات نقدية للزبائن</div><button class="btn btn-sm" onclick="closeModal()">✕</button></div>
-    <div class="form-group"><label class="form-label">اسم العميل</label><input class="form-input" id="m-client" value="عميل نقدي سريع"></div>
-    <div class="form-group"><label class="form-label">الخدمة</label><input class="form-input" id="m-service" placeholder="مثال: تسريحة شعر، سشوار"></div>
+    <div class="form-group"><label class="form-label">اسم العميل</label><select class="form-input" id="m-client">
+      <option value="عميل نقدي سريع">عميل نقدي سريع</option>${cliOptions}</select></div>
+    <div class="form-group"><label class="form-label">الخدمة</label><select class="form-input" id="m-service" onchange="document.getElementById('m-amount').value = this.selectedOptions[0].dataset.price || ''">
+      <option value="">-- اختر خدمة أو اكتب يدوياً بالأسفل --</option>${svcOptions}</select></div>
+    <div class="form-group"><label class="form-label">وصف إضافي للخدمة (اختياري)</label><input class="form-input" id="m-service-note" placeholder="مثال: مع صبغة إضافية"></div>
     <div class="form-group"><label class="form-label">المبلغ المطلوب (JD)</label><input class="form-input" type="number" id="m-amount" step="any"></div>
     <div class="modal-footer"><button class="btn" onclick="closeModal()">إلغاء</button><button class="btn btn-gold" onclick="submitInvoice()">ترحيل وحفظ الفاتورة</button></div>`;
 }
 function submitInvoice() {
-  const c = document.getElementById('m-client').value, s = document.getElementById('m-service').value, a = Number(document.getElementById('m-amount').value || 0);
+  const c = document.getElementById('m-client').value;
+  const svcSelect = document.getElementById('m-service');
+  const note = document.getElementById('m-service-note').value.trim();
+  let s = svcSelect.value || note || 'خدمة عامة';
+  if(svcSelect.value && note) s = svcSelect.value + ' - ' + note;
+  const a = Number(document.getElementById('m-amount').value || 0);
   if(!s || a <= 0) { alert('الرجاء كتابة تفاصيل الخدمة والمبلغ!'); return; }
   journal.push({ date: new Date().toISOString().split('T')[0], receipt: "INV-"+Date.now().toString().slice(-3), client: c, service: s, amount: a });
   saveToStorage(); recalculateBalances(); closeModal(); showPage('sales', null);
@@ -681,20 +1177,34 @@ function renderDashboard() {
   expenses.forEach(e => exp += Number(e.amount));
   tips.forEach(t => tps += Number(t.amount));
   let cash = accounts.find(a=>a.code==="1101")?.balance || 0;
+  let invValue = inventory.reduce((s,i) => s + Number(i.curStock)*Number(i.unitCost), 0);
 
   document.getElementById('dash-kpi-rev').textContent = rev.toFixed(3);
   document.getElementById('dash-kpi-exp').textContent = exp.toFixed(3);
   document.getElementById('dash-kpi-tips').textContent = tps.toFixed(3);
   document.getElementById('dash-kpi-cash').textContent = cash.toFixed(3);
+  document.getElementById('dash-kpi-inv').textContent = invValue.toFixed(3);
 }
 function renderJournal() {
-  document.getElementById('j-tbody').innerHTML = journal.map(j => `<tr><td>${j.date}</td><td><code>${j.receipt}</code></td><td><strong>${j.client}</strong></td><td>${j.service}</td><td class="green font-600">${Number(j.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد فواتير مبيعات مسجلة</td></tr>';
+  document.getElementById('j-tbody').innerHTML = journal.map((j,idx) => `<tr><td>${j.date}</td><td><code>${j.receipt}</code></td><td><strong>${j.client}</strong></td><td>${j.service}</td><td class="green font-600">${Number(j.amount).toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditInvoice(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center">لا يوجد فواتير مبيعات مسجلة</td></tr>';
 }
 function renderExpenses() {
-  document.getElementById('exp-tbody').innerHTML = expenses.map(e => `<tr><td>${e.date}</td><td><span class="badge badge-purple">${e.category}</span></td><td>${e.desc}</td><td class="gold">${e.costCenter}</td><td class="red font-600">${Number(e.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">سجل المصاريف فارغ</td></tr>';
+  document.getElementById('exp-tbody').innerHTML = expenses.map((e,idx) => `<tr><td>${e.date}</td><td><span class="badge badge-purple">${e.category}</span></td><td>${e.desc}</td><td class="gold">${e.costCenter}</td><td class="red font-600">${Number(e.amount).toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditExpense(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteExpense(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="6" style="text-align:center">سجل المصاريف فارغ</td></tr>';
 }
 function renderTips() {
-  document.getElementById('tips-tbody').innerHTML = tips.map(t => `<tr><td>${t.date}</td><td><strong>${t.empName}</strong></td><td>${t.desc}</td><td class="purple font-600">${Number(t.amount).toFixed(3)}</td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center">لا يوجد إكراميات مسجلة حالياً</td></tr>';
+  document.getElementById('tips-tbody').innerHTML = tips.map((t,idx) => `<tr><td>${t.date}</td><td><strong>${t.empName}</strong></td><td>${t.desc}</td><td class="purple font-600">${Number(t.amount).toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditTip(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteTip(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد إكراميات مسجلة حالياً</td></tr>';
 }
 function renderEmployees() {
   document.getElementById('emp-tbody').innerHTML = employees.map(e => `
@@ -712,13 +1222,63 @@ function renderEmployees() {
     </tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد موظفين مسجلين</td></tr>';
 }
 function renderAccountsTable() {
-  document.getElementById('acc-tbody').innerHTML = accounts.map(a => `<tr><td><code>${a.code}</code></td><td><strong>${a.name}</strong></td><td>${a.type}</td><td>${a.category}</td><td class="font-600 ${a.balance>=0?'green':'red'}">${Number(a.balance).toFixed(3)}</td></tr>`).join('');
+  document.getElementById('acc-tbody').innerHTML = accounts.map((a,idx) => `<tr><td><code>${a.code}</code></td><td><strong>${a.name}</strong></td><td>${a.type}</td><td>${a.category}</td><td class="font-600 ${a.balance>=0?'green':'red'}">${Number(a.balance).toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditAccount(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteAccount(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('');
 }
 function renderCostCentersTable() {
-  document.getElementById('cc-tbody').innerHTML = costCenters.map(c => `<tr><td><code>${c.code}</code></td><td><strong>${c.name}</strong></td><td>${c.desc}</td></tr>`).join('');
+  document.getElementById('cc-tbody').innerHTML = costCenters.map((c,idx) => `<tr><td><code>${c.code}</code></td><td><strong>${c.name}</strong></td><td>${c.desc}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditCostCenter(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteCostCenter(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('');
 }
 function renderLedger() {
-  document.getElementById('led-tbody').innerHTML = ledger.map(l => `<tr><td>${l.date}</td><td><code>${l.entryNo}</code></td><td>${l.drCode}</td><td>${l.crCode}</td><td>${l.desc}</td><td class="green font-600">${Number(l.amount).toFixed(3)}</td><td class="gold">${l.costCenter}</td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">سجل القيود العامة فارغ</td></tr>';
+  document.getElementById('led-tbody').innerHTML = ledger.map((l,idx) => `<tr><td>${l.date}</td><td><code>${l.entryNo}</code></td><td>${l.drCode}</td><td>${l.crCode}</td><td>${l.desc}</td><td class="green font-600">${Number(l.amount).toFixed(3)}</td><td class="gold">${l.costCenter}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditLedger(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteLedger(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="8" style="text-align:center">سجل القيود العامة فارغ</td></tr>';
+}
+
+function renderClientsTable() {
+  document.getElementById('cli-tbody').innerHTML = clients.map((c,idx) => {
+    let total = journal.filter(j => j.client === c.name).reduce((s,j) => s + Number(j.amount), 0);
+    return `<tr><td><strong>${c.name}</strong></td><td>${c.phone||''}</td><td>${c.notes||''}</td><td class="green font-600">${total.toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditClient(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteClient(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد عملاء مسجلين</td></tr>';
+}
+
+function renderServicesTable() {
+  document.getElementById('svc-tbody').innerHTML = services.map((s,idx) => `<tr><td><strong>${s.name}</strong></td><td><span class="badge badge-purple">${s.category}</span></td><td class="green font-600">${Number(s.price).toFixed(3)}</td><td>${s.duration}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditService(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteService(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center">لا يوجد خدمات مسجلة</td></tr>';
+}
+
+function renderInventoryTable() {
+  document.getElementById('inv-tbody').innerHTML = inventory.map((i,idx) => {
+    let low = Number(i.curStock) <= Number(i.minStock);
+    return `<tr><td><strong>${i.name}</strong></td><td>${i.category}</td><td>${i.curStock}</td><td>${i.minStock}</td><td>${Number(i.unitCost).toFixed(3)}</td>
+    <td><span class="badge ${low?'badge-purple':'badge-green'}" style="${low?'background:#fbe3e3;color:#c03b3a':''}">${low?'إعادة طلب':'متوفر'}</span></td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="openEditInventory(${idx})"><i class="ti ti-edit"></i></button>
+      <button class="btn btn-sm btn-danger" onclick="deleteInventory(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`;
+  }).join('') || '<tr><td colspan="7" style="text-align:center">لا يوجد أصناف مخزون مسجلة</td></tr>';
+}
+
+function renderPurchasesTable() {
+  document.getElementById('pur-tbody').innerHTML = purchases.map((p,idx) => `<tr><td>${p.date}</td><td>${p.supplier}</td><td>${p.itemName}</td><td>${p.qty}</td><td>${Number(p.unitPrice).toFixed(3)}</td><td class="red font-600">${Number(p.total).toFixed(3)}</td>
+    <td><div class="flex-gap">
+      <button class="btn btn-sm btn-danger" onclick="deletePurchase(${idx})"><i class="ti ti-trash"></i></button>
+    </div></td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">لا يوجد فواتير مشتريات مسجلة</td></tr>';
 }
 
 // ═══════════════════════════════════════════════
@@ -774,6 +1334,97 @@ function generateBalanceSheet() {
     </div>`;
 }
 
+function generateTrialBalance() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  let totalDr = 0, totalCr = 0;
+  const rows = accounts.map(a => {
+    const isDebitType = (a.type === "Asset" || a.type === "Expense");
+    const dr = isDebitType ? Math.max(a.balance, 0) : Math.max(-a.balance, 0);
+    const cr = isDebitType ? Math.max(-a.balance, 0) : Math.max(a.balance, 0);
+    totalDr += dr; totalCr += cr;
+    return `<tr><td><code>${a.code}</code></td><td>${a.name}</td><td>${a.type}</td><td class="green font-600">${dr.toFixed(3)}</td><td class="red font-600">${cr.toFixed(3)}</td></tr>`;
+  }).join('');
+  const balanced = Math.abs(totalDr - totalCr) < 0.001;
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #C9A84C; padding-bottom:4px">ميزان المراجعة (Trial Balance)</h3>
+      <table>
+        <thead><tr><th>الكود</th><th>اسم الحساب</th><th>النوع</th><th>مدين</th><th>دائن</th></tr></thead>
+        <tbody>${rows}
+          <tr class="report-total"><td colspan="3">الإجمالي</td><td class="green font-600">${totalDr.toFixed(3)}</td><td class="red font-600">${totalCr.toFixed(3)}</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:10px; font-size:12px" class="${balanced?'green':'red'} font-600">${balanced?'✓ الميزان متوازن (مدين = دائن)':'⚠️ الميزان غير متوازن - راجع القيود اليدوية'}</p>
+    </div>`;
+}
+
+function generateMonthlyReport() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  const month = document.getElementById('report-month-picker').value;
+  if(!month) { alert('الرجاء اختيار الشهر أولاً!'); return; }
+  const inMonth = (d) => (d||'').slice(0,7) === month;
+
+  const monthSales = journal.filter(j => inMonth(j.date));
+  const monthExp = expenses.filter(e => inMonth(e.date));
+  const monthTips = tips.filter(t => inMonth(t.date));
+  const monthPur = purchases.filter(p => inMonth(p.date));
+
+  const rev = monthSales.reduce((s,j)=>s+Number(j.amount),0);
+  const exp = monthExp.reduce((s,e)=>s+Number(e.amount),0);
+  const tps = monthTips.reduce((s,t)=>s+Number(t.amount),0);
+  const pur = monthPur.reduce((s,p)=>s+Number(p.total),0);
+  const net = rev - exp - tps - pur;
+
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #C9A84C; padding-bottom:4px">التقرير الشهري - ${month}</h3>
+      <table style="margin-bottom:15px">
+        <thead><tr><th>البند</th><th>عدد الحركات</th><th>القيمة (JD)</th></tr></thead>
+        <tbody>
+          <tr><td>إجمالي مبيعات الخدمات</td><td>${monthSales.length}</td><td class="green font-600">${rev.toFixed(3)}</td></tr>
+          <tr><td>إجمالي المصاريف</td><td>${monthExp.length}</td><td class="red font-600">(${exp.toFixed(3)})</td></tr>
+          <tr><td>إجمالي الإكراميات الموزعة</td><td>${monthTips.length}</td><td class="red font-600">(${tps.toFixed(3)})</td></tr>
+          <tr><td>إجمالي المشتريات</td><td>${monthPur.length}</td><td class="red font-600">(${pur.toFixed(3)})</td></tr>
+          <tr class="report-total"><td colspan="2">صافي الربح/الخسارة للشهر</td><td class="${net>=0?'green':'red'} font-600">${net.toFixed(3)}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function generateStaffCommissionReport() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  const rows = employees.map(e => {
+    const empTips = tips.filter(t => t.empId === e.id);
+    const total = empTips.reduce((s,t)=>s+Number(t.amount),0);
+    return `<tr><td><code>${e.id}</code></td><td><strong>${e.name}</strong></td><td>${e.job}</td><td>${empTips.length}</td><td class="purple font-600">${total.toFixed(3)}</td></tr>`;
+  }).join('');
+  const grandTotal = tips.reduce((s,t)=>s+Number(t.amount),0);
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #C9A84C; padding-bottom:4px">تقرير إكراميات وعمولات الموظفين</h3>
+      <table>
+        <thead><tr><th>كود الموظف</th><th>الاسم</th><th>الوظيفة</th><th>عدد الإكراميات</th><th>إجمالي الإكراميات (JD)</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="5" style="text-align:center">لا يوجد موظفين مسجلين</td></tr>'}
+          <tr class="report-total"><td colspan="4">الإجمالي العام</td><td class="purple font-600">${grandTotal.toFixed(3)}</td></tr>
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function generateLowStockReport() {
+  const div = document.getElementById('report-result-panel'); div.style.display = 'block';
+  const low = inventory.filter(i => Number(i.curStock) <= Number(i.minStock));
+  const rows = low.map(i => `<tr><td><strong>${i.name}</strong></td><td>${i.category}</td><td class="red font-600">${i.curStock}</td><td>${i.minStock}</td><td>${(Number(i.minStock)-Number(i.curStock)+1)}</td></tr>`).join('');
+  div.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:12px; font-size:14px; border-bottom:2px solid #C9A84C; padding-bottom:4px">تقرير نواقص المخزون (إعادة الطلب)</h3>
+      <table>
+        <thead><tr><th>الصنف</th><th>الفئة</th><th>الكمية الحالية</th><th>الحد الأدنى</th><th>الكمية المقترح طلبها</th></tr></thead>
+        <tbody>${rows || '<tr><td colspan="5" style="text-align:center">✓ لا يوجد نواقص - كل الأصناف ضمن الحد الآمن</td></tr>'}</tbody>
+      </table>
+    </div>`;
+}
+
 // ═══════════════════════════════════════════════
 // DATA RUNTIME PERSISTENCE
 // ═══════════════════════════════════════════════
@@ -785,7 +1436,8 @@ function loadSampleData() {
   expenses = [{ date: "2026-07-02", category: "إيجارات", desc: "دفع قسط الإيجار الشهري للموقع", costCenter: "قسم الإدارة والعموميات", amount: 60.000 }];
   tips = [{ date: "2026-07-03", empId: "EMP-01", empName: "رائد العبدالله", desc: "إكرام متميز من عميل مبيعات الفرح", amount: 15.000 }];
   ledger = [{ date: "2026-07-01", entryNo: "JV-701", drCode: "1201", crCode: "2101", desc: "إثبات رأسمال أصول ثابتة ومعدات صالون التجميل", amount: 2000.000, costCenter: "بدون مركز كلفة" }];
-  
+  purchases = [{ date: "2026-07-01", supplier: "شركة مستلزمات التجميل", itemId: "INV-01", itemName: "شامبو 1 لتر", qty: 10, unitPrice: 6.5, total: 65.000 }];
+
   saveToStorage(); recalculateBalances(); alert('✓ تم تحميل قاعدة البيانات التجريبية بنجاح.'); showPage('dashboard', null);
 }
 
@@ -799,6 +1451,10 @@ function saveToStorage() {
   localStorage.setItem('g_acc_v4', JSON.stringify(accounts));
   localStorage.setItem('g_cc_v4', JSON.stringify(costCenters));
   localStorage.setItem('g_emp_v4', JSON.stringify(employees));
+  localStorage.setItem('g_cli_v4', JSON.stringify(clients));
+  localStorage.setItem('g_svc_v4', JSON.stringify(services));
+  localStorage.setItem('g_inv_v4', JSON.stringify(inventory));
+  localStorage.setItem('g_pur_v4', JSON.stringify(purchases));
   localStorage.setItem('g_users_v4', JSON.stringify(systemUsers));
   localStorage.setItem('g_config_v4', JSON.stringify(systemConfig));
   localStorage.setItem('g_j_v4', JSON.stringify(journal));
@@ -811,12 +1467,63 @@ function loadFromStorage() {
   if(localStorage.getItem('g_acc_v4')) accounts = JSON.parse(localStorage.getItem('g_acc_v4'));
   if(localStorage.getItem('g_cc_v4')) costCenters = JSON.parse(localStorage.getItem('g_cc_v4'));
   if(localStorage.getItem('g_emp_v4')) employees = JSON.parse(localStorage.getItem('g_emp_v4'));
+  if(localStorage.getItem('g_cli_v4')) clients = JSON.parse(localStorage.getItem('g_cli_v4'));
+  if(localStorage.getItem('g_svc_v4')) services = JSON.parse(localStorage.getItem('g_svc_v4'));
+  if(localStorage.getItem('g_inv_v4')) inventory = JSON.parse(localStorage.getItem('g_inv_v4'));
+  if(localStorage.getItem('g_pur_v4')) purchases = JSON.parse(localStorage.getItem('g_pur_v4'));
   if(localStorage.getItem('g_users_v4')) systemUsers = JSON.parse(localStorage.getItem('g_users_v4'));
   if(localStorage.getItem('g_config_v4')) systemConfig = JSON.parse(localStorage.getItem('g_config_v4'));
   if(localStorage.getItem('g_j_v4')) journal = JSON.parse(localStorage.getItem('g_j_v4'));
   if(localStorage.getItem('g_e_v4')) expenses = JSON.parse(localStorage.getItem('g_e_v4'));
   if(localStorage.getItem('g_t_v4')) tips = JSON.parse(localStorage.getItem('g_t_v4'));
   if(localStorage.getItem('g_l_v4')) ledger = JSON.parse(localStorage.getItem('g_l_v4'));
+}
+
+// ═══════════════════════════════════════════════
+// REAL FILE BACKUP / RESTORE (JSON)
+// ═══════════════════════════════════════════════
+function exportBackup() {
+  const data = { accounts, costCenters, employees, clients, services, inventory, purchases, systemUsers, systemConfig, journal, expenses, tips, ledger, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'glamour_backup_' + new Date().toISOString().slice(0,10) + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importBackup() {
+  const input = document.getElementById('restore-file-input');
+  const file = input.files[0];
+  if(!file) { alert('الرجاء اختيار ملف نسخة احتياطية أولاً!'); return; }
+  if(!confirm('⚠️ سيتم استبدال كل البيانات الحالية بمحتوى الملف. هل تريد المتابعة؟')) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      accounts = data.accounts || accounts;
+      costCenters = data.costCenters || costCenters;
+      employees = data.employees || employees;
+      clients = data.clients || clients;
+      services = data.services || services;
+      inventory = data.inventory || inventory;
+      purchases = data.purchases || purchases;
+      systemUsers = data.systemUsers || systemUsers;
+      systemConfig = data.systemConfig || systemConfig;
+      journal = data.journal || journal;
+      expenses = data.expenses || expenses;
+      tips = data.tips || tips;
+      ledger = data.ledger || ledger;
+      saveToStorage(); recalculateBalances(); applySecurityConfigUI();
+      alert('✓ تم استعادة النسخة الاحتياطية بنجاح.');
+      showPage('dashboard', null);
+    } catch(err) {
+      alert('⚠️ الملف غير صالح أو تالف: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
 }
 
 // App Launcher
