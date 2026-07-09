@@ -1995,27 +1995,58 @@ function exportCurrentTableToExcel() {
 }
 // ═══════════════════════════════════════════════
 // طباعة فاتورة فردية مع رمز QR (فاتورة حرارية/A5 قابلة للطباعة)
-// الرمز يُولَّد بالكامل داخل المتصفح (لا يُرسل أي بيانات لأي خادم خارجي)
+// الرمز يُولَّد بالكامل داخل المتصفح إن أمكن (لا يُرسل أي بيانات
+// لأي خادم خارجي)؛ وإن تعذّر ذلك لأي سبب (حجب المتصفح للمكتبة
+// مثلاً)، نستخدم خدمة توليد QR احتياطية بالصورة فقط كخط دفاع ثانٍ
+// حتى لا تخرج الفاتورة بدون رمز نهائياً.
 // ═══════════════════════════════════════════════
 function printInvoiceReceipt(idx) {
-  const j = journal[idx]; if(!j) { alert('تعذر إيجاد الفاتورة المطلوبة.'); return; }
-  if(typeof QRCode === 'undefined') { alert('⚠️ تعذر تحميل مكتبة رمز QR (تحقق من الاتصال بالإنترنت) حاول مجدداً.'); return; }
+  const j = journal[idx];
+  if(!j) { alert('⚠️ تعذر إيجاد الفاتورة المطلوبة (رقم غير صالح).'); return; }
 
   const qrText = `Glamour Invoice\nNo: ${j.receipt}\nClient: ${j.client}\nService: ${j.service}\nAmount: ${Number(j.amount).toFixed(3)} JD\nDate: ${j.date}\nStatus: ${j.status === 'Pending' ? 'Pending' : 'Paid'}`;
+
+  if(typeof QRCode === 'undefined') {
+    console.warn('QRCode library not loaded - falling back to external QR image service');
+    openInvoicePrintWindow(j, fallbackQrImageUrl(qrText));
+    return;
+  }
 
   const tempDiv = document.createElement('div');
   tempDiv.style.cssText = 'position:absolute;left:-9999px;top:-9999px';
   document.body.appendChild(tempDiv);
-  new QRCode(tempDiv, { text: qrText, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M });
 
-  setTimeout(() => {
+  try { new QRCode(tempDiv, { text: qrText, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M }); }
+  catch(e) {
+    console.error('QRCode generation threw an error:', e);
+    document.body.removeChild(tempDiv);
+    openInvoicePrintWindow(j, fallbackQrImageUrl(qrText));
+    return;
+  }
+
+  // نستطلع (poll) لحين ظهور الـ canvas بدل انتظار وقت ثابت قد لا يكفي
+  let attempts = 0;
+  const poll = setInterval(() => {
+    attempts++;
     const canvasEl = tempDiv.querySelector('canvas');
     const imgEl = tempDiv.querySelector('img');
-    const qrDataUrl = canvasEl ? canvasEl.toDataURL('image/png') : (imgEl ? imgEl.src : '');
-    document.body.removeChild(tempDiv);
-    if(!qrDataUrl) { alert('⚠️ تعذر توليد رمز QR لهذه الفاتورة.'); return; }
-    openInvoicePrintWindow(j, qrDataUrl);
-  }, 200);
+    const ready = canvasEl || imgEl;
+
+    if(ready || attempts > 25) { // ~2.5 ثانية كحد أقصى
+      clearInterval(poll);
+      let qrDataUrl = '';
+      try {
+        if(canvasEl) qrDataUrl = canvasEl.toDataURL('image/png');
+        else if(imgEl) qrDataUrl = imgEl.src;
+      } catch(e) { console.error('Failed reading QR canvas:', e); }
+      document.body.removeChild(tempDiv);
+      openInvoicePrintWindow(j, qrDataUrl || fallbackQrImageUrl(qrText));
+    }
+  }, 100);
+}
+
+function fallbackQrImageUrl(text) {
+  return 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(text);
 }
 
 function openInvoicePrintWindow(j, qrDataUrl) {
