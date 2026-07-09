@@ -6,6 +6,7 @@
 <title>Glamour Salon — النظام المالي والإداري المتكامل</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f0f0f5;min-height:100vh;display:flex;direction:rtl}
@@ -1322,7 +1323,11 @@ function submitInvoice() {
   const status = document.getElementById('m-status').value;
   if(!s || a <= 0) { alert('الرجاء كتابة تفاصيل الخدمة والمبلغ!'); return; }
   journal.push({ date: new Date().toISOString().split('T')[0], receipt: "INV-"+Date.now().toString().slice(-3), client: c, service: s, amount: a, status });
+  const newIdx = journal.length - 1;
   saveToStorage(); recalculateBalances(); closeModal(); showPage('sales', null);
+  if(confirm('✓ تم حفظ الفاتورة بنجاح. هل تريد طباعتها الآن (تتضمن رمز QR)؟')) {
+    printInvoiceReceipt(newIdx);
+  }
 }
 
 function openAddExpense() {
@@ -1528,6 +1533,7 @@ function renderDashboard() {
 function renderJournal() {
   document.getElementById('j-tbody').innerHTML = journal.map((j,idx) => `<tr><td><span class="status-badge ${j.status==='Pending'?'status-pending':'status-paid'}">${j.status==='Pending'?'معلّقة':'مدفوعة'}</span></td><td>${j.date}</td><td><code>${j.receipt}</code></td><td><strong>${j.client}</strong></td><td>${j.service}</td><td class="green font-600">${Number(j.amount).toFixed(3)}</td>
     <td><div class="flex-gap">
+      <button class="btn btn-sm btn-gold" onclick="printInvoiceReceipt(${idx})" title="طباعة فاتورة بـ QR"><i class="ti ti-receipt"></i></button>
       <button class="btn btn-sm btn-gold" onclick="openEditInvoice(${idx})"><i class="ti ti-edit"></i></button>
       <button class="btn btn-sm btn-danger" onclick="deleteInvoice(${idx})"><i class="ti ti-trash"></i></button>
     </div></td></tr>`).join('') || '<tr><td colspan="7" style="text-align:center">لا يوجد فواتير مبيعات مسجلة</td></tr>';
@@ -1987,6 +1993,83 @@ function exportCurrentTableToExcel() {
   const safeName = pageTitle.replace(/[^\w\u0600-\u06FF]+/g, '_');
   XLSX.writeFile(wb, `${safeName}_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
+// ═══════════════════════════════════════════════
+// طباعة فاتورة فردية مع رمز QR (فاتورة حرارية/A5 قابلة للطباعة)
+// الرمز يُولَّد بالكامل داخل المتصفح (لا يُرسل أي بيانات لأي خادم خارجي)
+// ═══════════════════════════════════════════════
+function printInvoiceReceipt(idx) {
+  const j = journal[idx]; if(!j) { alert('تعذر إيجاد الفاتورة المطلوبة.'); return; }
+  if(typeof QRCode === 'undefined') { alert('⚠️ تعذر تحميل مكتبة رمز QR (تحقق من الاتصال بالإنترنت) حاول مجدداً.'); return; }
+
+  const qrText = `Glamour Invoice\nNo: ${j.receipt}\nClient: ${j.client}\nService: ${j.service}\nAmount: ${Number(j.amount).toFixed(3)} JD\nDate: ${j.date}\nStatus: ${j.status === 'Pending' ? 'Pending' : 'Paid'}`;
+
+  const tempDiv = document.createElement('div');
+  tempDiv.style.cssText = 'position:absolute;left:-9999px;top:-9999px';
+  document.body.appendChild(tempDiv);
+  new QRCode(tempDiv, { text: qrText, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M });
+
+  setTimeout(() => {
+    const canvasEl = tempDiv.querySelector('canvas');
+    const imgEl = tempDiv.querySelector('img');
+    const qrDataUrl = canvasEl ? canvasEl.toDataURL('image/png') : (imgEl ? imgEl.src : '');
+    document.body.removeChild(tempDiv);
+    if(!qrDataUrl) { alert('⚠️ تعذر توليد رمز QR لهذه الفاتورة.'); return; }
+    openInvoicePrintWindow(j, qrDataUrl);
+  }, 200);
+}
+
+function openInvoicePrintWindow(j, qrDataUrl) {
+  const w = window.open('', '_blank', 'width=420,height=680');
+  if(!w) { alert('⚠️ المتصفح منع فتح نافذة الطباعة. الرجاء السماح بالنوافذ المنبثقة (popups) لهذا الموقع والمحاولة مجدداً.'); return; }
+
+  const companyName = systemConfig.companyName || 'Glamour Studio';
+  const companyAddress = systemConfig.companyAddress || '';
+  const logoHtml = systemConfig.companyLogo
+    ? `<img src="${systemConfig.companyLogo}" style="width:46px;height:46px;object-fit:cover;border-radius:8px;flex-shrink:0">`
+    : `<div style="width:46px;height:46px;border-radius:8px;background:#C9A84C;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#1a1a2e;font-weight:700">${companyName.charAt(0)}</span></div>`;
+
+  w.document.write(`<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>فاتورة ${j.receipt}</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;padding:26px;color:#1a1a2e;max-width:380px;margin:0 auto}
+  .inv-header{display:flex;align-items:center;gap:10px;border-bottom:2px solid #C9A84C;padding-bottom:14px;margin-bottom:16px}
+  .inv-header h2{font-size:17px;margin:0}
+  .inv-header p{font-size:11px;color:#888;margin:2px 0 0}
+  .inv-num{text-align:center;font-size:13px;color:#888;margin-bottom:10px}
+  table{width:100%;border-collapse:collapse;margin:10px 0}
+  td{padding:7px 0;font-size:13px;border-bottom:1px dashed #eee}
+  td.label{color:#888;width:42%}
+  .total-row td{font-weight:700;font-size:16px;border-bottom:none;border-top:2px solid #1a1a2e;padding-top:12px}
+  .status-badge{display:inline-block;padding:2px 10px;border-radius:6px;font-size:11px;font-weight:700}
+  .status-paid{background:#eaf3de;color:#3b6d11}
+  .status-pending{background:#fdf1dc;color:#b8760a}
+  .qr-wrap{text-align:center;margin-top:22px}
+  .qr-wrap img{width:140px;height:140px}
+  .qr-wrap p{font-size:10px;color:#999;margin-top:8px}
+  .footer{text-align:center;font-size:11px;color:#999;margin-top:18px;border-top:1px dashed #eee;padding-top:12px}
+  @media print{ body{padding:10px} }
+</style></head>
+<body>
+  <div class="inv-header">${logoHtml}<div><h2>${companyName}</h2><p>${companyAddress}</p></div></div>
+  <div class="inv-num">فاتورة رقم <strong>${j.receipt}</strong></div>
+  <table>
+    <tr><td class="label">التاريخ</td><td>${j.date}</td></tr>
+    <tr><td class="label">العميل</td><td>${j.client}</td></tr>
+    <tr><td class="label">الخدمة</td><td>${j.service}</td></tr>
+    <tr><td class="label">حالة الدفع</td><td><span class="status-badge ${j.status==='Pending'?'status-pending':'status-paid'}">${j.status==='Pending'?'معلّقة':'مدفوعة'}</span></td></tr>
+    <tr class="total-row"><td>الإجمالي المستحق</td><td>${Number(j.amount).toFixed(3)} JD</td></tr>
+  </table>
+  <div class="qr-wrap">
+    <img src="${qrDataUrl}">
+    <p>امسح الرمز لعرض تفاصيل الفاتورة</p>
+  </div>
+  <div class="footer">شكراً لزيارتكم ${companyName}${companyAddress ? ' — ' + companyAddress : ''}</div>
+</body></html>`);
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 300);
+}
+
 // App Launcher
 (async function init(){
   await loadFromStorage(); recalculateBalances();
