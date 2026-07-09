@@ -608,7 +608,6 @@ function doLogin() {
     document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
     document.getElementById('main-app').style.setProperty('display', 'flex', 'important');
     sessionStorage.setItem('glamour_session_active', u);
-    sessionStorage.setItem('glamour_role', found.role || 'staff');
     recalculateBalances();
     applySecurityConfigUI();
     showPage('dashboard', null);
@@ -618,11 +617,12 @@ function doLogin() {
 }
 function doLogout() {
   sessionStorage.removeItem('glamour_session_active');
-  sessionStorage.removeItem('glamour_role');
   location.reload();
 }
 function isAdmin() {
-  return sessionStorage.getItem('glamour_role') === 'admin';
+  const uname = sessionStorage.getItem('glamour_session_active');
+  const u = systemUsers.find(x => x.username === uname);
+  return !!u && u.role === 'admin';
 }
 
 // ═══════════════════════════════════════════════
@@ -1790,6 +1790,24 @@ function loadFromStorage() {
   if(localStorage.getItem('g_e_v4')) expenses = JSON.parse(localStorage.getItem('g_e_v4'));
   if(localStorage.getItem('g_t_v4')) tips = JSON.parse(localStorage.getItem('g_t_v4'));
   if(localStorage.getItem('g_l_v4')) ledger = JSON.parse(localStorage.getItem('g_l_v4'));
+  migrateDataShape();
+}
+
+// ═══════════════════════════════════════════════
+// MIGRATION: يعالج بيانات محفوظة من نسخة سابقة للبرنامج
+// (مثلاً: مستخدمون بدون حقل "role"، أو إعدادات بدون حقول الهوية)
+// حتى لا تختفي ميزات جديدة بسبب بيانات قديمة ناقصة الحقول.
+// ═══════════════════════════════════════════════
+function migrateDataShape() {
+  let changed = false;
+  systemUsers.forEach(u => {
+    if(!u.role) { u.role = (u.username === 'admin') ? 'admin' : 'staff'; changed = true; }
+  });
+  const configDefaults = { showBackupSection: true, showSampleDataBtn: true, companyName: "Glamour Studio", companyAddress: "عمّان، الأردن", companyLogo: "" };
+  Object.keys(configDefaults).forEach(k => {
+    if(systemConfig[k] === undefined) { systemConfig[k] = configDefaults[k]; changed = true; }
+  });
+  if(changed) saveToStorage();
 }
 
 // ═══════════════════════════════════════════════
