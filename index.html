@@ -113,7 +113,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
 <!-- LOGIN SCREEN -->
 <div id="login-screen">
   <div class="login-box">
-    <div style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:2px">تسجيل الدخول للنظام المالي</div>
+    <div style="font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:2px" id="login-brand-name">تسجيل الدخول للنظام المالي</div>
     <div style="font-size:12px;color:#888;margin-bottom:20px">Glamour Suite v3.0</div>
     <form onsubmit="event.preventDefault(); doLogin();">
       <div class="form-group" style="text-align:right">
@@ -136,9 +136,9 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
   <div class="sidebar">
     <div class="sidebar-logo">
       <div class="logo-row">
-        <div class="logo-icon"><i class="ti ti-scissors" style="color:#1a1a2e;font-size:16px"></i></div>
+        <div class="logo-icon" id="sidebar-logo-icon"><i class="ti ti-scissors" style="color:#1a1a2e;font-size:16px"></i></div>
         <div>
-          <div class="salon-name">Glamour Studio</div>
+          <div class="salon-name" id="sidebar-salon-name">Glamour Studio</div>
           <div class="salon-sub">النظام المالي الموحد</div>
         </div>
       </div>
@@ -166,7 +166,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
 
     <div class="nav-section">التقارير والتحكم</div>
     <div class="nav-item" onclick="showPage('reports',this)"><i class="ti ti-chart-bar"></i><span>القوائم المالية الختامية</span></div>
-    <div class="nav-item" onclick="showPage('settings',this)"><i class="ti ti-settings"></i><span>إعدادات النظام والأمان</span></div>
+    <div class="nav-item" onclick="showPage('settings',this)" id="nav-settings"><i class="ti ti-settings"></i><span>إعدادات النظام والأمان</span></div>
 
     <!-- BACKUP CONTAINER WITH ADVANCED TOGGLE -->
     <div class="sidebar-backup" id="sidebar-backup-section">
@@ -427,7 +427,30 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
       <!-- SETTINGS & SECURITY (COMPLETELY REMODELD) -->
       <div class="page" id="page-settings">
         <div class="grid-2">
-          
+
+          <!-- COMPANY BRANDING (NAME, ADDRESS, LOGO) -->
+          <div class="card">
+            <div class="section-title" style="margin-bottom:15px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">هوية الصالون (الاسم والعنوان والشعار)</div>
+
+            <div class="form-group">
+              <label class="form-label">اسم الصالون / الشركة</label>
+              <input class="form-input" id="cfg-company-name" placeholder="مثال: Glamour Studio">
+            </div>
+            <div class="form-group">
+              <label class="form-label">العنوان (يظهر بأعلى كل الشاشات)</label>
+              <input class="form-input" id="cfg-company-address" placeholder="مثال: عمّان، الأردن">
+            </div>
+            <div class="form-group">
+              <label class="form-label">شعار الصالون (Logo)</label>
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px">
+                <div id="logo-preview" style="width:48px;height:48px;border-radius:10px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #e0e0e8"></div>
+                <input type="file" class="form-input" id="cfg-company-logo-input" accept="image/*" style="flex:1" onchange="previewLogoFile()">
+              </div>
+              <button class="btn btn-sm" style="border-color:#e0e0e8" onclick="removeCompanyLogo()"><i class="ti ti-x"></i> إزالة الشعار الحالي</button>
+            </div>
+            <button class="btn btn-gold btn-sm" style="width:100%; justify-content:center; margin-top:10px" onclick="saveCompanyBranding()">حفظ هوية الصالون</button>
+          </div>
+
           <!-- SYSTEM APPEARANCE & SECURITY CONFIG -->
           <div class="card">
             <div class="section-title" style="margin-bottom:15px; border-bottom: 1px solid #f0f0f0; padding-bottom:5px;">تخصيص الخصوصية والواجهات</div>
@@ -562,7 +585,10 @@ let systemUsers = [
 
 let systemConfig = {
   showBackupSection: true,
-  showSampleDataBtn: true
+  showSampleDataBtn: true,
+  companyName: "Glamour Studio",
+  companyAddress: "عمّان، الأردن",
+  companyLogo: ""
 };
 
 let journal = [];
@@ -637,6 +663,10 @@ function recalculateBalances() {
 // SCREEN NAVIGATION
 // ═══════════════════════════════════════════════
 function showPage(pageId, navEl) {
+  if(pageId === 'settings' && !isAdmin()) {
+    alert('⚠️ شاشة الإعدادات متاحة لحساب المسؤول (admin) فقط.');
+    pageId = 'dashboard'; navEl = null;
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   const target = document.getElementById('page-' + pageId); if(target) target.classList.add('active');
@@ -647,7 +677,7 @@ function showPage(pageId, navEl) {
   if(subtitleEl) {
     const monthNames = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
     const now = new Date();
-    subtitleEl.textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()} · عمّان، الأردن · الدينار الأردني (JD)`;
+    subtitleEl.textContent = `${monthNames[now.getMonth()]} ${now.getFullYear()} · ${systemConfig.companyAddress || 'عمّان، الأردن'} · الدينار الأردني (JD)`;
   }
   
   if(pageId === 'dashboard') renderDashboard();
@@ -1104,6 +1134,9 @@ function deletePurchase(idx) {
 function renderSettingsPage() {
   document.getElementById('cfg-show-backup').checked = systemConfig.showBackupSection;
   document.getElementById('cfg-show-sample').checked = systemConfig.showSampleDataBtn;
+  document.getElementById('cfg-company-name').value = systemConfig.companyName || '';
+  document.getElementById('cfg-company-address').value = systemConfig.companyAddress || '';
+  renderLogoPreview(systemConfig.companyLogo);
   
   let tbody = document.getElementById('users-tbody');
   tbody.innerHTML = systemUsers.map(u => `
@@ -1147,6 +1180,46 @@ function deleteUser(username) {
   }
 }
 
+// ═══════════════════════════════════════════════
+// COMPANY BRANDING (NAME / ADDRESS / LOGO)
+// ═══════════════════════════════════════════════
+let pendingLogoDataUrl = null;
+
+function renderLogoPreview(dataUrl) {
+  const el = document.getElementById('logo-preview');
+  if(!el) return;
+  el.innerHTML = dataUrl
+    ? `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover">`
+    : `<i class="ti ti-photo" style="color:#bbb;font-size:20px"></i>`;
+}
+
+function previewLogoFile() {
+  const input = document.getElementById('cfg-company-logo-input');
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 1024 * 1024) { alert('⚠️ الرجاء اختيار صورة أصغر من 1 ميجابايت لضمان الأداء الجيد.'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = (e) => { pendingLogoDataUrl = e.target.result; renderLogoPreview(pendingLogoDataUrl); };
+  reader.readAsDataURL(file);
+}
+
+function removeCompanyLogo() {
+  pendingLogoDataUrl = '';
+  document.getElementById('cfg-company-logo-input').value = '';
+  renderLogoPreview('');
+}
+
+function saveCompanyBranding() {
+  systemConfig.companyName = document.getElementById('cfg-company-name').value.trim() || 'Glamour Studio';
+  systemConfig.companyAddress = document.getElementById('cfg-company-address').value.trim() || 'عمّان، الأردن';
+  if(pendingLogoDataUrl !== null) systemConfig.companyLogo = pendingLogoDataUrl;
+  pendingLogoDataUrl = null;
+  saveToStorage();
+  applyBranding();
+  alert('✓ تم حفظ هوية الصالون بنجاح.');
+  showPage('settings', null);
+}
+
 function toggleSecurityViews() {
   systemConfig.showBackupSection = document.getElementById('cfg-show-backup').checked;
   systemConfig.showSampleDataBtn = document.getElementById('cfg-show-sample').checked;
@@ -1158,17 +1231,37 @@ function applySecurityConfigUI() {
   const section = document.getElementById('sidebar-backup-section');
   const sampleBtn = document.getElementById('btn-side-sample');
   const purgeBtn = document.getElementById('btn-side-purge');
+  const settingsNav = document.getElementById('nav-settings');
   const admin = isAdmin();
 
   if(section) section.style.display = systemConfig.showBackupSection ? 'flex' : 'none';
   if(sampleBtn) sampleBtn.style.display = (systemConfig.showSampleDataBtn && admin) ? 'flex' : 'none';
   if(purgeBtn) purgeBtn.style.display = admin ? 'flex' : 'none';
+  if(settingsNav) settingsNav.style.display = admin ? 'flex' : 'none';
 
   // شاشة الإعدادات: قسم الاستعادة وقسم إدارة المستخدمين للمسؤول فقط
   const restoreCard = document.getElementById('restore-card');
   if(restoreCard) restoreCard.style.display = admin ? 'block' : 'none';
   const usersCard = document.getElementById('users-mgmt-card');
   if(usersCard) usersCard.style.display = admin ? 'block' : 'none';
+
+  applyBranding();
+}
+
+function applyBranding() {
+  const name = systemConfig.companyName || 'Glamour Studio';
+  const nameEl = document.getElementById('sidebar-salon-name');
+  if(nameEl) nameEl.textContent = name;
+  const loginEl = document.getElementById('login-brand-name');
+  if(loginEl) loginEl.textContent = 'تسجيل الدخول - ' + name;
+  document.title = name + ' — النظام المالي والإداري المتكامل';
+
+  const iconEl = document.getElementById('sidebar-logo-icon');
+  if(iconEl) {
+    iconEl.innerHTML = systemConfig.companyLogo
+      ? `<img src="${systemConfig.companyLogo}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`
+      : `<i class="ti ti-scissors" style="color:#1a1a2e;font-size:16px"></i>`;
+  }
 }
 
 // ═══════════════════════════════════════════════
@@ -1820,6 +1913,7 @@ function restoreLatestAutoBackup() {
 // App Launcher
 (function init(){
   loadFromStorage(); recalculateBalances();
+  applyBranding();
   if(sessionStorage.getItem('glamour_session_active')) {
     document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
     document.getElementById('main-app').style.setProperty('display', 'flex', 'important');
