@@ -118,11 +118,11 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
     <form onsubmit="event.preventDefault(); doLogin();">
       <div class="form-group" style="text-align:right">
         <label class="form-label">اسم المستخدم</label>
-        <input type="text" class="form-input" id="login-username" value="admin">
+        <input type="text" class="form-input" id="login-username" placeholder="اكتب اسم المستخدم" autocomplete="off">
       </div>
       <div class="form-group" style="text-align:right; margin-bottom:20px">
         <label class="form-label">كلمة المرور</label>
-        <input type="password" class="form-input" id="login-password" value="1234">
+        <input type="password" class="form-input" id="login-password" placeholder="اكتب كلمة المرور" autocomplete="off">
       </div>
       <button type="submit" class="btn btn-gold" style="width:100%; justify-content:center; padding:10px">دخول النظام</button>
     </form>
@@ -580,7 +580,7 @@ let inventory = [
 let purchases = [];
 
 let systemUsers = [
-  { username: "admin", pass: "1234", role: "admin" }
+  { username: "admin", pass: "1234", role: "admin" } // يتم تحويلها تلقائياً إلى hash عند أول تشغيل، راجع migrateDataShape()
 ];
 
 let systemConfig = {
@@ -597,13 +597,38 @@ let tips = [];
 let ledger = [];
 
 // ═══════════════════════════════════════════════
+// تشفير كلمات المرور (SHA-256) قبل حفظها بالمتصفح
+// ملاحظة صريحة: هذا يمنع أي شخص يفتح أدوات المطوّر (DevTools) أو
+// localStorage من قراءة كلمة المرور الفعلية مباشرة، لكنه لا يخفي
+// كود البرنامج نفسه - لا يوجد أي طريقة "لإخفاء الكود" بتطبيق يعمل
+// بالكامل داخل المتصفح بدون خادم. التفاصيل بالشرح أسفل الرد.
+// ═══════════════════════════════════════════════
+async function hashPassword(plain) {
+  try {
+    if(window.crypto && window.crypto.subtle) {
+      const enc = new TextEncoder().encode(plain);
+      const buf = await crypto.subtle.digest('SHA-256', enc);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+  } catch(e) { console.warn('Web Crypto unavailable, using fallback hash:', e); }
+  // fallback بسيط (أضعف من SHA-256 لكنه يعمل حتى بدون HTTPS/Web Crypto)
+  let h = 0;
+  for(let i=0; i<plain.length; i++) { h = ((h<<5)-h) + plain.charCodeAt(i); h |= 0; }
+  return 'fb_' + Math.abs(h).toString(16) + '_' + plain.length;
+}
+function looksHashed(pass) {
+  return typeof pass === 'string' && (/^[a-f0-9]{64}$/.test(pass) || pass.startsWith('fb_'));
+}
+
+// ═══════════════════════════════════════════════
 // AUTHENTICATION & LOGIN/LOGOUT
 // ═══════════════════════════════════════════════
-function doLogin() {
+async function doLogin() {
   const u = document.getElementById('login-username').value.trim();
   const p = document.getElementById('login-password').value.trim();
-  
-  let found = systemUsers.find(user => user.username === u && user.pass === p);
+  const pHash = await hashPassword(p);
+
+  let found = systemUsers.find(user => user.username === u && user.pass === pHash);
   if (found) {
     document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
     document.getElementById('main-app').style.setProperty('display', 'flex', 'important');
@@ -1150,24 +1175,26 @@ function renderSettingsPage() {
   renderAutoBackupLog();
 }
 
-function changeAdminPassword() {
+async function changeAdminPassword() {
   const p = document.getElementById('sys-admin-pass').value.trim();
   if(!p) { alert('الرجاء كتابة كلمة مرور صالحة!'); return; }
+  if(p.length < 4) { alert('⚠️ الرجاء اختيار كلمة مرور أطول (4 أحرف على الأقل).'); return; }
   let admin = systemUsers.find(u => u.username === 'admin');
   if(admin) {
-    admin.pass = p; saveToStorage(); alert('✓ تم تحديث كلمة مرور حساب المسؤول بنجاح.');
+    admin.pass = await hashPassword(p); saveToStorage(); alert('✓ تم تحديث كلمة مرور حساب المسؤول بنجاح.');
     document.getElementById('sys-admin-pass').value = '';
   }
 }
 
-function addNewUser() {
+async function addNewUser() {
   const u = document.getElementById('new-user-name').value.trim();
   const p = document.getElementById('new-user-pass').value.trim();
   const role = document.getElementById('new-user-role').value;
   if(!u || !p) { alert('يرجى ملء اسم المستخدم وكلمة المرور!'); return; }
+  if(p.length < 4) { alert('⚠️ الرجاء اختيار كلمة مرور أطول (4 أحرف على الأقل).'); return; }
   if(systemUsers.find(user => user.username === u)) { alert('اسم المستخدم موجود مسبقاً!'); return; }
   
-  systemUsers.push({ username: u, pass: p, role });
+  systemUsers.push({ username: u, pass: await hashPassword(p), role });
   saveToStorage(); renderSettingsPage();
   document.getElementById('new-user-name').value = ''; document.getElementById('new-user-pass').value = '';
   alert('✓ تم إنشاء وزرع حساب المستخدم الجديد بنجاح.');
@@ -1776,7 +1803,7 @@ function saveToStorage() {
   localStorage.setItem('g_l_v4', JSON.stringify(ledger));
 }
 
-function loadFromStorage() {
+async function loadFromStorage() {
   if(localStorage.getItem('g_acc_v4')) accounts = JSON.parse(localStorage.getItem('g_acc_v4'));
   if(localStorage.getItem('g_cc_v4')) costCenters = JSON.parse(localStorage.getItem('g_cc_v4'));
   if(localStorage.getItem('g_emp_v4')) employees = JSON.parse(localStorage.getItem('g_emp_v4'));
@@ -1790,19 +1817,21 @@ function loadFromStorage() {
   if(localStorage.getItem('g_e_v4')) expenses = JSON.parse(localStorage.getItem('g_e_v4'));
   if(localStorage.getItem('g_t_v4')) tips = JSON.parse(localStorage.getItem('g_t_v4'));
   if(localStorage.getItem('g_l_v4')) ledger = JSON.parse(localStorage.getItem('g_l_v4'));
-  migrateDataShape();
+  await migrateDataShape();
 }
 
 // ═══════════════════════════════════════════════
 // MIGRATION: يعالج بيانات محفوظة من نسخة سابقة للبرنامج
-// (مثلاً: مستخدمون بدون حقل "role"، أو إعدادات بدون حقول الهوية)
-// حتى لا تختفي ميزات جديدة بسبب بيانات قديمة ناقصة الحقول.
+// (مستخدمون بدون حقل "role"، كلمات مرور محفوظة نص صريح من نسخة
+// قديمة، أو إعدادات بدون حقول الهوية) حتى لا تختفي ميزات جديدة أو
+// تبقى بيانات حساسة مكشوفة بسبب بيانات قديمة ناقصة.
 // ═══════════════════════════════════════════════
-function migrateDataShape() {
+async function migrateDataShape() {
   let changed = false;
-  systemUsers.forEach(u => {
+  for(const u of systemUsers) {
     if(!u.role) { u.role = (u.username === 'admin') ? 'admin' : 'staff'; changed = true; }
-  });
+    if(!looksHashed(u.pass)) { u.pass = await hashPassword(u.pass); changed = true; }
+  }
   const configDefaults = { showBackupSection: true, showSampleDataBtn: true, companyName: "Glamour Studio", companyAddress: "عمّان، الأردن", companyLogo: "" };
   Object.keys(configDefaults).forEach(k => {
     if(systemConfig[k] === undefined) { systemConfig[k] = configDefaults[k]; changed = true; }
@@ -1832,7 +1861,7 @@ function importBackup() {
   if(!confirm('⚠️ سيتم استبدال كل البيانات الحالية بمحتوى الملف. هل تريد المتابعة؟')) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = async function(e) {
     try {
       const data = JSON.parse(e.target.result);
       accounts = data.accounts || accounts;
@@ -1848,6 +1877,7 @@ function importBackup() {
       expenses = data.expenses || expenses;
       tips = data.tips || tips;
       ledger = data.ledger || ledger;
+      await migrateDataShape();
       saveToStorage(); recalculateBalances(); applySecurityConfigUI();
       alert('✓ تم استعادة النسخة الاحتياطية بنجاح.');
       showPage('dashboard', null);
@@ -1911,7 +1941,7 @@ function renderAutoBackupLog() {
   el.innerHTML = 'آخر نسخ تلقائية: ' + last5.map(l => new Date(l.time).toLocaleString('ar-JO')).join(' — ');
 }
 
-function restoreLatestAutoBackup() {
+async function restoreLatestAutoBackup() {
   if(!isAdmin()) { alert('⚠️ هذا الإجراء متاح لحساب المسؤول (admin) فقط.'); return; }
   const raw = localStorage.getItem('g_autobackup_latest_v1');
   if(!raw) { alert('لا توجد نسخة تلقائية داخلية محفوظة بعد.'); return; }
@@ -1922,6 +1952,7 @@ function restoreLatestAutoBackup() {
     clients = data.clients || clients; services = data.services || services; inventory = data.inventory || inventory; purchases = data.purchases || purchases;
     systemUsers = data.systemUsers || systemUsers; systemConfig = data.systemConfig || systemConfig;
     journal = data.journal || journal; expenses = data.expenses || expenses; tips = data.tips || tips; ledger = data.ledger || ledger;
+    await migrateDataShape();
     saveToStorage(); recalculateBalances(); applySecurityConfigUI();
     alert('✓ تم الاستعادة من آخر نسخة تلقائية داخلية بنجاح.');
     showPage('dashboard', null);
@@ -1929,8 +1960,8 @@ function restoreLatestAutoBackup() {
 }
 
 // App Launcher
-(function init(){
-  loadFromStorage(); recalculateBalances();
+(async function init(){
+  await loadFromStorage(); recalculateBalances();
   applyBranding();
   if(sessionStorage.getItem('glamour_session_active')) {
     document.getElementById('login-screen').style.setProperty('display', 'none', 'important');
