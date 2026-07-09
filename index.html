@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Glamour Salon — النظام المالي والإداري المتكامل</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;background:#f0f0f5;min-height:100vh;display:flex;direction:rtl}
@@ -189,6 +190,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0f0f0;color:#333;text-align:right}
       </div>
       <div class="topbar-right">
         <button class="btn btn-gold" onclick="openInvModal()"><i class="ti ti-plus"></i>فاتورة مبيعات جديدة</button>
+        <button class="btn" onclick="exportCurrentTableToExcel()"><i class="ti ti-file-spreadsheet"></i>تصدير Excel</button>
         <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i>طباعة</button>
       </div>
     </div>
@@ -1959,6 +1961,32 @@ async function restoreLatestAutoBackup() {
   } catch(e) { alert('⚠️ تعذرت الاستعادة: ' + e.message); }
 }
 
+// ═══════════════════════════════════════════════
+// EXCEL EXPORT (بديل الطباعة) - يصدّر جدول الشاشة الحالية المعروضة
+// ═══════════════════════════════════════════════
+function exportCurrentTableToExcel() {
+  if(typeof XLSX === 'undefined') { alert('⚠️ تعذر تحميل مكتبة تصدير Excel (تحقق من الاتصال بالإنترنت) حاول مجدداً.'); return; }
+
+  const activePage = document.querySelector('.page.active');
+  const table = activePage ? activePage.querySelector('table') : null;
+  if(!table || !table.querySelector('tbody tr')) {
+    alert('لا يوجد جدول بيانات بهذه الشاشة للتصدير. انتقل لشاشة فيها بيانات (كالفواتير، المصاريف، أو التقارير) ثم حاول مجدداً.');
+    return;
+  }
+
+  // ننسخ الجدول ونحذف عمود "خيارات" (أزرار تعديل/حذف) لأنه مالوش معنى بملف إكسل
+  const clone = table.cloneNode(true);
+  const headerCells = Array.from(clone.querySelectorAll('thead th'));
+  const optIdx = headerCells.findIndex(th => th.textContent.trim() === 'خيارات');
+  if(optIdx > -1) {
+    clone.querySelectorAll('tr').forEach(tr => { if(tr.children[optIdx]) tr.children[optIdx].remove(); });
+  }
+
+  const wb = XLSX.utils.table_to_book(clone, { sheet: 'بيانات', raw: false });
+  const pageTitle = (document.getElementById('page-title').textContent || 'تصدير').trim();
+  const safeName = pageTitle.replace(/[^\w\u0600-\u06FF]+/g, '_');
+  XLSX.writeFile(wb, `${safeName}_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
 // App Launcher
 (async function init(){
   await loadFromStorage(); recalculateBalances();
